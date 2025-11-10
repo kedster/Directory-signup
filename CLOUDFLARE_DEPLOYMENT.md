@@ -96,7 +96,7 @@ cd worker
 Open `wrangler.toml` and update the configuration:
 
 ```toml
-name = "directory-signup-api"
+name = "dirworker"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
@@ -161,7 +161,7 @@ The worker uses Cloudflare secrets for sensitive data. Configure them using Wran
 Complete example configuration:
 
 ```toml
-name = "directory-signup-api"
+name = "dirworker"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
@@ -194,7 +194,7 @@ wrangler deploy
  ⛅️ wrangler 3.x.x
 -------------------
 ✨ Successfully published your script to
-   https://directory-signup-api.yourname.workers.dev
+   https://dirworker.appsta.sh
 ```
 
 ### Deploy to Staging
@@ -207,7 +207,7 @@ wrangler deploy --env staging
 
 After deployment, Wrangler will provide a URL like:
 ```
-https://directory-signup-api.yourname.workers.dev
+https://dirworker.appsta.sh
 ```
 
 ---
@@ -219,7 +219,7 @@ https://directory-signup-api.yourname.workers.dev
 #### 1. Test API Documentation Endpoint
 
 ```bash
-curl https://directory-signup-api.yourname.workers.dev/api
+curl https://dirworker.appsta.sh/api
 ```
 
 **Expected response:**
@@ -240,13 +240,13 @@ curl https://directory-signup-api.yourname.workers.dev/api
 #### 2. Test Get Sites
 
 ```bash
-curl https://directory-signup-api.yourname.workers.dev/api/sites
+curl https://dirworker.appsta.sh/api/sites
 ```
 
 #### 3. Test Get Plugins
 
 ```bash
-curl https://directory-signup-api.yourname.workers.dev/api/plugins
+curl https://dirworker.appsta.sh/api/plugins
 ```
 
 **Expected response:**
@@ -278,7 +278,7 @@ curl https://directory-signup-api.yourname.workers.dev/api/plugins
 #### 4. Test Update Sites (requires setup)
 
 ```bash
-curl -X PUT https://directory-signup-api.yourname.workers.dev/api/sites \
+curl -X PUT https://dirworker.appsta.sh/api/sites \
   -H "Content-Type: application/json" \
   -d '{
     "sites": [
@@ -296,7 +296,7 @@ curl -X PUT https://directory-signup-api.yourname.workers.dev/api/sites \
 #### 5. Test Trigger Apify Run (requires setup)
 
 ```bash
-curl -X POST https://directory-signup-api.yourname.workers.dev/api/run \
+curl -X POST https://dirworker.appsta.sh/api/run \
   -H "Content-Type: application/json" \
   -d '{
     "sites": ["producthunt.com", "betalist.com"],
@@ -390,7 +390,7 @@ wrangler secret list
 wrangler tail
 
 # Delete and redeploy
-wrangler delete directory-signup-api
+wrangler delete dirworker
 wrangler deploy
 ```
 
@@ -514,7 +514,7 @@ View metrics:
 Update `gui/index.html` to use your worker URL:
 
 ```javascript
-const API_BASE_URL = 'https://directory-signup-api.yourname.workers.dev';
+const API_BASE_URL = 'https://dirworker.appsta.sh';
 
 // Example API call
 async function fetchSites() {
