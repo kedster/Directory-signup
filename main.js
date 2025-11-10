@@ -1,6 +1,11 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs').promises;
-const path = require('path');
+import Apify from 'apify';
+import puppeteer from 'puppeteer';
+import { promises as fs } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
 const CONCURRENT_LIMIT = 5;
@@ -61,7 +66,7 @@ async function saveHTMLSnapshot(page, siteName, timestamp) {
 }
 
 // Process a single site
-async function processSite(site, overrides, browser) {
+async function processSite(site, overrides, browser, listing) {
   const siteName = site.name.replace(/[^a-zA-Z0-9]/g, '_');
   const startTime = Date.now();
   const timestamp = Date.now();
@@ -91,7 +96,7 @@ async function processSite(site, overrides, browser) {
     // Check if we have specific selectors for this site
     if (siteOverrides.selectors) {
       console.log(`  Using custom selectors for ${domain}`);
-      await applyCustomSelectors(page, siteOverrides.selectors);
+      await applyCustomSelectors(page, siteOverrides.selectors, listing);
     } else {
       console.log(`  No custom selectors found for ${domain}, would need manual inspection`);
       // Save diagnostic information
@@ -120,7 +125,8 @@ async function processSite(site, overrides, browser) {
     return {
       site: site.name,
       status: 'success',
-      duration
+      duration,
+      listing: listing
     };
     
   } catch (error) {
@@ -152,17 +158,43 @@ async function processSite(site, overrides, browser) {
 }
 
 // Apply custom selectors (placeholder for actual form filling logic)
-async function applyCustomSelectors(page, selectors) {
+async function applyCustomSelectors(page, selectors, listing) {
   // This is a placeholder - in a real scenario, you would fill in forms
-  // based on the selectors provided
+  // based on the selectors provided and listing data
   console.log('  Applying custom selectors...');
   
-  // Example: Check if selectors exist on page
+  // Example: Check if selectors exist on page and fill with listing data
   if (selectors.emailInput) {
     const emailExists = await page.$(selectors.emailInput);
     if (emailExists) {
       console.log(`    ✓ Found email input: ${selectors.emailInput}`);
-      // In real usage: await page.type(selectors.emailInput, 'your-email@example.com');
+      if (listing && listing.email) {
+        await page.type(selectors.emailInput, listing.email);
+      }
+    }
+  }
+  
+  if (selectors.nameInput && listing && listing.name) {
+    const nameExists = await page.$(selectors.nameInput);
+    if (nameExists) {
+      console.log(`    ✓ Found name input: ${selectors.nameInput}`);
+      await page.type(selectors.nameInput, listing.name);
+    }
+  }
+  
+  if (selectors.websiteInput && listing && listing.website) {
+    const websiteExists = await page.$(selectors.websiteInput);
+    if (websiteExists) {
+      console.log(`    ✓ Found website input: ${selectors.websiteInput}`);
+      await page.type(selectors.websiteInput, listing.website);
+    }
+  }
+  
+  if (selectors.descriptionInput && listing && listing.description) {
+    const descExists = await page.$(selectors.descriptionInput);
+    if (descExists) {
+      console.log(`    ✓ Found description input: ${selectors.descriptionInput}`);
+      await page.type(selectors.descriptionInput, listing.description);
     }
   }
   
@@ -176,7 +208,7 @@ async function applyCustomSelectors(page, selectors) {
 }
 
 // Process sites in batches
-async function processSitesInBatches(sites, overrides, batchSize) {
+async function processSitesInBatches(sites, overrides, batchSize, listings) {
   const results = [];
   const browser = await puppeteer.launch({
     headless: 'new',
@@ -184,20 +216,24 @@ async function processSitesInBatches(sites, overrides, batchSize) {
   });
   
   try {
-    for (let i = 0; i < sites.length; i += batchSize) {
-      const batch = sites.slice(i, i + batchSize);
-      console.log(`\n${'='.repeat(60)}`);
-      console.log(`Processing batch ${Math.floor(i / batchSize) + 1} (sites ${i + 1}-${Math.min(i + batchSize, sites.length)} of ${sites.length})`);
-      console.log('='.repeat(60));
+    for (const listing of listings) {
+      console.log(`\nProcessing listing: ${listing.name || 'Unknown'}`);
       
-      const batchPromises = batch.map(site => processSite(site, overrides, browser));
-      const batchResults = await Promise.all(batchPromises);
-      results.push(...batchResults);
-      
-      // Small delay between batches
-      if (i + batchSize < sites.length) {
-        console.log('\nWaiting 2 seconds before next batch...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      for (let i = 0; i < sites.length; i += batchSize) {
+        const batch = sites.slice(i, i + batchSize);
+        console.log(`\n${'='.repeat(60)}`);
+        console.log(`Processing batch ${Math.floor(i / batchSize) + 1} (sites ${i + 1}-${Math.min(i + batchSize, sites.length)} of ${sites.length})`);
+        console.log('='.repeat(60));
+        
+        const batchPromises = batch.map(site => processSite(site, overrides, browser, listing));
+        const batchResults = await Promise.all(batchPromises);
+        results.push(...batchResults);
+        
+        // Small delay between batches
+        if (i + batchSize < sites.length) {
+          console.log('\nWaiting 2 seconds before next batch...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
       }
     }
   } finally {
@@ -256,25 +292,43 @@ function generateReport(results) {
   console.log('='.repeat(60) + '\n');
 }
 
-// Main function
-async function main() {
-  console.log('Directory Signup Automation');
+// Main function wrapped in Apify.main()
+Apify.main(async () => {
+  console.log('Directory Signup Automation (Apify Actor)');
   console.log('='.repeat(60));
   
   try {
     // Setup
     await ensureDirectories();
+    
+    // Get input from Apify or use defaults
+    const input = await Apify.getInput() || {};
+    const listings = input.listings || [
+      { 
+        name: 'Test Startup', 
+        email: 'test@example.com', 
+        website: 'https://example.com', 
+        description: 'Example description' 
+      }
+    ];
+    
     const sites = await loadSites();
     const overrides = await loadOverrides();
     
     console.log(`\nLoaded ${sites.length} sites`);
-    console.log(`Processing ${CONCURRENT_LIMIT} sites at a time\n`);
+    console.log(`Processing ${CONCURRENT_LIMIT} sites at a time`);
+    console.log(`Processing ${listings.length} listing(s)\n`);
     
     // Process sites
-    const results = await processSitesInBatches(sites, overrides, CONCURRENT_LIMIT);
+    const results = await processSitesInBatches(sites, overrides, CONCURRENT_LIMIT, listings);
     
     // Generate report
     generateReport(results);
+    
+    // Push results to Apify dataset
+    for (const result of results) {
+      await Apify.pushData(result);
+    }
     
     // Save results to JSON
     await fs.writeFile(
@@ -286,13 +340,8 @@ async function main() {
     
   } catch (error) {
     console.error('Fatal error:', error);
-    process.exit(1);
+    throw error;
   }
-}
+});
 
-// Run the script
-if (require.main === module) {
-  main();
-}
-
-module.exports = { main, processSite, loadSites, loadOverrides };
+export { processSite, loadSites, loadOverrides, extractDomain };

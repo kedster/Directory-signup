@@ -1,0 +1,8 @@
+{
+  "name": "auto-directory-signup",
+  "version": "1.0.0",
+  "buildTag": "latest",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

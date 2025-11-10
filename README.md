@@ -1,6 +1,6 @@
 # Directory-signup
 
-Automate SaaS listing directory signups using Puppeteer. This tool helps you submit your product to multiple directory websites efficiently.
+Automate SaaS listing directory signups using Puppeteer and Apify. This Apify Actor helps you submit your product to multiple directory websites efficiently.
 
 ## Features
 
@@ -10,6 +10,22 @@ Automate SaaS listing directory signups using Puppeteer. This tool helps you sub
 - 📄 HTML snapshot saving for debugging
 - 🎯 Site-specific selector overrides
 - 📊 Detailed reporting and results tracking
+- 🤖 Apify platform integration for scalable automation
+
+## Apify Actor Structure
+
+This project follows Apify's recommended structure for Node.js actors:
+
+```
+/auto-directory-signup/
+├── main.js                ← Entry point (wrapped in Apify.main())
+├── package.json           ← Dependencies & ES module config
+├── apify.json             ← Apify actor configuration
+├── sites.json             ← Directory sites configuration
+├── overrides.json         ← Site-specific selectors
+├── test.js                ← Test suite
+└── README.md              ← This file
+```
 
 ## Installation
 
@@ -19,11 +35,34 @@ npm install
 
 ## Usage
 
+### Running Locally
+
 1. **First Run** - The script will process all sites and identify which ones need custom selectors:
 
 ```bash
 npm start
 ```
+
+### Running on Apify Platform
+
+When deployed to Apify, the actor accepts input in the following format:
+
+```json
+{
+  "listings": [
+    {
+      "name": "Your Startup Name",
+      "email": "your@email.com",
+      "website": "https://yourwebsite.com",
+      "description": "Your product description"
+    }
+  ]
+}
+```
+
+If no input is provided, the actor will use default test data.
+
+### Processing Workflow
 
 2. **Review Failures** - After the first run, check the generated folders:
    - `screenshots/` - Contains screenshots of each page
@@ -36,9 +75,9 @@ npm start
   "producthunt.com": {
     "selectors": {
       "emailInput": "#email",
-      "passwordInput": "#password",
-      "companyNameInput": "#company-name",
+      "nameInput": "#product-name",
       "websiteInput": "#website",
+      "descriptionInput": "#description",
       "submitButton": "button[type='submit']"
     },
     "waitForSelector": ".success-message",
@@ -64,18 +103,37 @@ Contains the list of directory sites to process. Each entry has:
 ### overrides.json
 
 Contains site-specific configurations:
-- `selectors` - CSS selectors for form fields
+- `selectors` - CSS selectors for form fields (nameInput, emailInput, websiteInput, descriptionInput, submitButton)
 - `waitForSelector` - Selector to wait for after submission
 - `customSteps` - Array of custom actions (future feature)
+
+### apify.json
+
+Apify-specific configuration:
+- `name` - Actor name
+- `version` - Actor version
+- `buildTag` - Docker build tag
+- `env` - Environment variables
+
+## Apify Integration
+
+This actor is built with the Apify SDK and includes:
+
+- **Apify.main()** - Entry point wrapper for proper Apify execution
+- **Apify.getInput()** - Accepts listing data from Apify input
+- **Apify.pushData()** - Pushes results to Apify dataset for later retrieval
+- ES Module support for modern JavaScript features
 
 ## File Structure
 
 ```
 .
-├── index.js              # Main automation script
+├── main.js               # Main automation script (Apify entry point)
 ├── sites.json            # List of 50 directory sites
 ├── overrides.json        # Site-specific selector overrides
-├── package.json          # Node.js dependencies
+├── package.json          # Node.js dependencies (ES modules)
+├── apify.json            # Apify configuration
+├── test.js               # Test suite
 ├── screenshots/          # Generated screenshots (gitignored)
 ├── html_snapshots/       # Generated HTML files (gitignored)
 └── results.json          # Detailed results log
@@ -83,14 +141,16 @@ Contains site-specific configurations:
 
 ## Process Flow
 
-1. Script loads sites from `sites.json`
-2. Processes 5 sites concurrently
-3. For each site:
+1. Actor accepts input listings from Apify (or uses defaults)
+2. Loads sites from `sites.json`
+3. Processes 5 sites concurrently
+4. For each site and listing:
    - Navigates to the startUrl
    - Checks for site-specific overrides
-   - If overrides exist, applies custom selectors
+   - If overrides exist, fills form with listing data
    - If no overrides, saves screenshot and HTML for inspection
-4. Generates summary report with:
+5. Pushes results to Apify dataset
+6. Generates summary report with:
    - Success count
    - Sites needing overrides
    - Failed sites with error details
@@ -116,11 +176,20 @@ This tool is designed for iterative refinement:
 - Some sites may require login or have bot protection
 - Consider adding delays or custom steps for complex forms
 - Check `results.json` for detailed information about each run
+- On Apify, results are automatically stored in the dataset
 
 ## Requirements
 
 - Node.js 14+
 - npm or yarn
+- Apify SDK (included in dependencies)
+
+## ES Module Notes
+
+This project uses ES modules (`type: "module"` in package.json):
+- Use `import` instead of `require()`
+- Use `export` instead of `module.exports`
+- JSON files are loaded using `fs.readFile()` and `JSON.parse()`
 
 ## License
 
