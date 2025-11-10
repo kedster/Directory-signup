@@ -160,6 +160,13 @@ Optional (if using GitHub API):
 GITHUB_TOKEN=your_github_token
 ```
 
+Optional (for CAPTCHA solving):
+```
+ANTICAPTCHA_KEY=your_anticaptcha_api_key
+```
+
+**Note:** The ANTICAPTCHA_KEY is used to automatically solve CAPTCHAs on directory sites that require them. You can obtain an API key from services like [2Captcha](https://2captcha.com) or [Anti-Captcha](https://anti-captcha.com).
+
 ---
 
 ## Actor Configuration
@@ -174,7 +181,8 @@ Ensure `apify.json` is configured:
   "version": "1.0.0",
   "buildTag": "latest",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "ANTICAPTCHA_KEY": ""
   }
 }
 ```

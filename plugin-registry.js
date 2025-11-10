@@ -1,5 +1,8 @@
 /**
  * Plugin Registry - Manages and loads plugins dynamically
+ * 
+ * Plugins have access to the ANTICAPTCHA_KEY environment variable
+ * for automatic CAPTCHA solving on sites that require it.
  */
 
 import { promises as fs } from 'fs';

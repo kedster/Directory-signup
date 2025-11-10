@@ -14,6 +14,11 @@ const TIMEOUT = 30000; // 30 seconds
 const SCREENSHOTS_DIR = './screenshots';
 const HTML_SNAPSHOTS_DIR = './html_snapshots';
 
+// Anti-CAPTCHA configuration
+// Set ANTICAPTCHA_KEY environment variable to enable automatic CAPTCHA solving
+// Supports services like 2Captcha (https://2captcha.com) or Anti-Captcha (https://anti-captcha.com)
+const ANTICAPTCHA_KEY = process.env.ANTICAPTCHA_KEY || null;
+
 // Ensure output directories exist
 async function ensureDirectories() {
   await fs.mkdir(SCREENSHOTS_DIR, { recursive: true });
@@ -340,7 +345,16 @@ Apify.main(async () => {
     
     console.log(`\nLoaded ${sites.length} sites`);
     console.log(`Processing ${CONCURRENT_LIMIT} sites at a time`);
-    console.log(`Processing ${listings.length} listing(s)\n`);
+    console.log(`Processing ${listings.length} listing(s)`);
+    
+    // Log anti-captcha configuration
+    if (ANTICAPTCHA_KEY) {
+      console.log(`✓ Anti-CAPTCHA enabled (key configured)`);
+    } else {
+      console.log(`⚠ Anti-CAPTCHA disabled (no key provided)`);
+      console.log(`  Set ANTICAPTCHA_KEY environment variable to enable automatic CAPTCHA solving`);
+    }
+    console.log('');
     
     // Process sites
     const results = await processSitesInBatches(sites, overrides, CONCURRENT_LIMIT, listings);
@@ -367,4 +381,4 @@ Apify.main(async () => {
   }
 });
 
-export { processSite, loadSites, loadOverrides, extractDomain };
+export { processSite, loadSites, loadOverrides, extractDomain, ANTICAPTCHA_KEY };

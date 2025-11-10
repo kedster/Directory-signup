@@ -279,6 +279,44 @@ async function runTests() {
     failed++;
   }
 
+  // Test 15: Verify ANTICAPTCHA_KEY environment variable configuration
+  try {
+    const apifyJsonData = await fs.readFile('./apify.json', 'utf8');
+    const apifyJson = JSON.parse(apifyJsonData);
+    
+    const hasAnticaptchaKey = apifyJson.env && 'ANTICAPTCHA_KEY' in apifyJson.env;
+    
+    if (hasAnticaptchaKey) {
+      console.log('✓ Test 15: apify.json includes ANTICAPTCHA_KEY environment variable');
+      passed++;
+    } else {
+      console.log('✗ Test 15: apify.json missing ANTICAPTCHA_KEY configuration');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 15:', error.message);
+    failed++;
+  }
+
+  // Test 16: Verify ANTICAPTCHA_KEY documentation in README
+  try {
+    const readmeData = await fs.readFile('./README.md', 'utf8');
+    const hasAnticaptchaDocs = readmeData.includes('ANTICAPTCHA_KEY') || 
+                               readmeData.includes('Anti-CAPTCHA') ||
+                               readmeData.includes('anti-captcha');
+    
+    if (hasAnticaptchaDocs) {
+      console.log('✓ Test 16: README.md documents anti-captcha functionality');
+      passed++;
+    } else {
+      console.log('✗ Test 16: README.md missing anti-captcha documentation');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 16:', error.message);
+    failed++;
+  }
+
   // Summary
   console.log('\n' + '='.repeat(50));
   console.log(`Tests completed: ${passed} passed, ${failed} failed`);
