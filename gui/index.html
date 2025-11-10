@@ -553,22 +553,37 @@
                     console.warn('Worker API unavailable:', apiError.message);
                 }
                 
-                // Strategy 2: Try loading from relative path (for local/Pages deployment)
+                // Strategy 2: Try loading from same directory (for Cloudflare Pages deployment)
                 if (!data) {
                     try {
-                        console.log('Attempting to load sites from relative path...');
-                        const response = await fetch('../sites.json');
+                        console.log('Attempting to load sites from same directory...');
+                        const response = await fetch('./sites.json');
                         if (response.ok) {
                             data = await response.json();
-                            loadMethod = 'Relative Path';
-                            console.log('✓ Successfully loaded from relative path');
+                            loadMethod = 'Same Directory';
+                            console.log('✓ Successfully loaded from same directory');
                         }
-                    } catch (relativeError) {
-                        console.warn('Relative path unavailable:', relativeError.message);
+                    } catch (sameDirectoryError) {
+                        console.warn('Same directory unavailable:', sameDirectoryError.message);
                     }
                 }
                 
-                // Strategy 3: Try loading from GitHub raw URL as last resort
+                // Strategy 3: Try loading from relative path (for local development)
+                if (!data) {
+                    try {
+                        console.log('Attempting to load sites from parent directory...');
+                        const response = await fetch('../sites.json');
+                        if (response.ok) {
+                            data = await response.json();
+                            loadMethod = 'Parent Directory';
+                            console.log('✓ Successfully loaded from parent directory');
+                        }
+                    } catch (relativeError) {
+                        console.warn('Parent directory unavailable:', relativeError.message);
+                    }
+                }
+                
+                // Strategy 4: Try loading from GitHub raw URL as last resort
                 if (!data) {
                     try {
                         console.log('Attempting to load sites from GitHub...');
