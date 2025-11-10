@@ -3,8 +3,8 @@
  * These tests validate the logic without requiring Puppeteer
  */
 
-const fs = require('fs').promises;
-const path = require('path');
+import { promises as fs } from 'fs';
+import path from 'path';
 
 // Test helper functions
 function extractDomain(url) {
@@ -64,11 +64,18 @@ async function runTests() {
     const pkgData = await fs.readFile('./package.json', 'utf8');
     const pkg = JSON.parse(pkgData);
     
-    if (pkg.dependencies && pkg.dependencies.puppeteer) {
-      console.log('✓ Test 4: package.json includes Puppeteer dependency');
+    const hasPuppeteer = pkg.dependencies && pkg.dependencies.puppeteer;
+    const hasApify = pkg.dependencies && pkg.dependencies.apify;
+    const isESModule = pkg.type === 'module';
+    
+    if (hasPuppeteer && hasApify && isESModule) {
+      console.log('✓ Test 4: package.json includes Puppeteer, Apify, and ES module support');
       passed++;
     } else {
-      console.log('✗ Test 4: package.json missing Puppeteer dependency');
+      console.log('✗ Test 4: package.json missing required dependencies or module type');
+      if (!hasPuppeteer) console.log('  Missing: puppeteer');
+      if (!hasApify) console.log('  Missing: apify');
+      if (!isESModule) console.log('  Missing: type: "module"');
       failed++;
     }
   } catch (error) {
@@ -76,14 +83,14 @@ async function runTests() {
     failed++;
   }
 
-  // Test 5: Verify index.js exists and has valid syntax
+  // Test 5: Verify main.js exists and has valid syntax
   try {
-    const indexExists = await fs.access('./index.js').then(() => true).catch(() => false);
-    if (indexExists) {
-      console.log('✓ Test 5: index.js exists');
+    const mainExists = await fs.access('./main.js').then(() => true).catch(() => false);
+    if (mainExists) {
+      console.log('✓ Test 5: main.js exists');
       passed++;
     } else {
-      console.log('✗ Test 5: index.js not found');
+      console.log('✗ Test 5: main.js not found');
       failed++;
     }
   } catch (error) {
@@ -158,6 +165,23 @@ async function runTests() {
     failed++;
   }
 
+  // Test 9: Verify apify.json exists
+  try {
+    const apifyData = await fs.readFile('./apify.json', 'utf8');
+    const apifyConfig = JSON.parse(apifyData);
+    
+    if (apifyConfig.name && apifyConfig.version) {
+      console.log('✓ Test 9: apify.json exists and is valid');
+      passed++;
+    } else {
+      console.log('✗ Test 9: apify.json missing required fields');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 9:', error.message);
+    failed++;
+  }
+
   // Summary
   console.log('\n' + '='.repeat(50));
   console.log(`Tests completed: ${passed} passed, ${failed} failed`);
@@ -166,7 +190,7 @@ async function runTests() {
   if (failed === 0) {
     console.log('\n✓ All tests passed! Implementation is ready.');
     console.log('\nNext steps:');
-    console.log('1. Run: npm install (requires Chrome download)');
+    console.log('1. Run: npm install (installs Apify SDK + Chrome)');
     console.log('2. Run: npm start');
     console.log('3. Review screenshots and HTML snapshots');
     console.log('4. Add overrides to overrides.json');
