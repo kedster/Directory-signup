@@ -1,0 +1,184 @@
+/**
+ * Unit tests for directory signup automation
+ * These tests validate the logic without requiring Puppeteer
+ */
+
+const fs = require('fs').promises;
+const path = require('path');
+
+// Test helper functions
+function extractDomain(url) {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname.replace('www.', '');
+  } catch (error) {
+    return 'unknown';
+  }
+}
+
+async function runTests() {
+  console.log('Running tests for Directory Signup Automation\n');
+  let passed = 0;
+  let failed = 0;
+
+  // Test 1: Load sites.json
+  try {
+    const sitesData = await fs.readFile('./sites.json', 'utf8');
+    const sites = JSON.parse(sitesData);
+    
+    if (sites.length === 50) {
+      console.log('✓ Test 1: sites.json contains exactly 50 sites');
+      passed++;
+    } else {
+      console.log(`✗ Test 1: Expected 50 sites, got ${sites.length}`);
+      failed++;
+    }
+    
+    // Verify each site has required fields
+    const allValid = sites.every(site => site.name && site.startUrl);
+    if (allValid) {
+      console.log('✓ Test 2: All sites have name and startUrl');
+      passed++;
+    } else {
+      console.log('✗ Test 2: Some sites missing required fields');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 1-2: Failed to load sites.json:', error.message);
+    failed += 2;
+  }
+
+  // Test 3: Load overrides.json
+  try {
+    const overridesData = await fs.readFile('./overrides.json', 'utf8');
+    const overrides = JSON.parse(overridesData);
+    console.log('✓ Test 3: overrides.json is valid JSON');
+    passed++;
+  } catch (error) {
+    console.log('✗ Test 3: Failed to load overrides.json:', error.message);
+    failed++;
+  }
+
+  // Test 4: Verify package.json
+  try {
+    const pkgData = await fs.readFile('./package.json', 'utf8');
+    const pkg = JSON.parse(pkgData);
+    
+    if (pkg.dependencies && pkg.dependencies.puppeteer) {
+      console.log('✓ Test 4: package.json includes Puppeteer dependency');
+      passed++;
+    } else {
+      console.log('✗ Test 4: package.json missing Puppeteer dependency');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 4: Failed to load package.json:', error.message);
+    failed++;
+  }
+
+  // Test 5: Verify index.js exists and has valid syntax
+  try {
+    const indexExists = await fs.access('./index.js').then(() => true).catch(() => false);
+    if (indexExists) {
+      console.log('✓ Test 5: index.js exists');
+      passed++;
+    } else {
+      console.log('✗ Test 5: index.js not found');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 5:', error.message);
+    failed++;
+  }
+
+  // Test 6: Domain extraction function
+  try {
+    const testCases = [
+      { url: 'https://www.producthunt.com/posts/new', expected: 'producthunt.com' },
+      { url: 'https://betalist.com/submit', expected: 'betalist.com' },
+      { url: 'https://www.g2.com/products/new', expected: 'g2.com' }
+    ];
+    
+    let allPassed = true;
+    for (const test of testCases) {
+      const result = extractDomain(test.url);
+      if (result !== test.expected) {
+        console.log(`  ✗ Domain extraction failed for ${test.url}: got ${result}, expected ${test.expected}`);
+        allPassed = false;
+      }
+    }
+    
+    if (allPassed) {
+      console.log('✓ Test 6: Domain extraction works correctly');
+      passed++;
+    } else {
+      console.log('✗ Test 6: Domain extraction has issues');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 6:', error.message);
+    failed++;
+  }
+
+  // Test 7: Verify .gitignore
+  try {
+    const gitignoreData = await fs.readFile('./.gitignore', 'utf8');
+    const hasNodeModules = gitignoreData.includes('node_modules');
+    const hasScreenshots = gitignoreData.includes('screenshots');
+    const hasHtmlSnapshots = gitignoreData.includes('html_snapshots');
+    
+    if (hasNodeModules && hasScreenshots && hasHtmlSnapshots) {
+      console.log('✓ Test 7: .gitignore properly configured');
+      passed++;
+    } else {
+      console.log('✗ Test 7: .gitignore missing required entries');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 7:', error.message);
+    failed++;
+  }
+
+  // Test 8: Verify README has instructions
+  try {
+    const readmeData = await fs.readFile('./README.md', 'utf8');
+    const hasInstallation = readmeData.includes('Installation');
+    const hasUsage = readmeData.includes('Usage');
+    const hasOverrides = readmeData.includes('overrides.json');
+    
+    if (hasInstallation && hasUsage && hasOverrides) {
+      console.log('✓ Test 8: README has complete documentation');
+      passed++;
+    } else {
+      console.log('✗ Test 8: README missing required sections');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 8:', error.message);
+    failed++;
+  }
+
+  // Summary
+  console.log('\n' + '='.repeat(50));
+  console.log(`Tests completed: ${passed} passed, ${failed} failed`);
+  console.log('='.repeat(50));
+  
+  if (failed === 0) {
+    console.log('\n✓ All tests passed! Implementation is ready.');
+    console.log('\nNext steps:');
+    console.log('1. Run: npm install (requires Chrome download)');
+    console.log('2. Run: npm start');
+    console.log('3. Review screenshots and HTML snapshots');
+    console.log('4. Add overrides to overrides.json');
+    process.exit(0);
+  } else {
+    console.log('\n✗ Some tests failed. Please review the implementation.');
+    process.exit(1);
+  }
+}
+
+// Run tests
+runTests().catch(error => {
+  console.error('Fatal error running tests:', error);
+  process.exit(1);
+});

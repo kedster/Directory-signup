@@ -1,0 +1,21 @@
+{
+  "name": "directory-signup",
+  "version": "1.0.0",
+  "description": "Automate SaaS listing directory signups using Puppeteer",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "puppeteer",
+    "automation",
+    "saas",
+    "directory"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.6.0"
+  }
+}

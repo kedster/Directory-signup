@@ -1,0 +1,13 @@
+{
+  "example.com": {
+    "selectors": {
+      "emailInput": "#email",
+      "passwordInput": "#password",
+      "companyNameInput": "#company-name",
+      "websiteInput": "#website",
+      "submitButton": "button[type='submit']"
+    },
+    "waitForSelector": ".success-message",
+    "customSteps": []
+  }
+}
