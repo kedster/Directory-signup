@@ -1,202 +1,454 @@
-[
-  {
-    "name": "ProductHunt",
-    "startUrl": "https://www.producthunt.com/posts/new"
-  },
-  {
-    "name": "BetaList",
-    "startUrl": "https://betalist.com/submit"
-  },
-  {
-    "name": "AlternativeTo",
-    "startUrl": "https://alternativeto.net/suggest/"
-  },
-  {
-    "name": "Capterra",
-    "startUrl": "https://www.capterra.com/vendors/sign-up"
-  },
-  {
-    "name": "G2",
-    "startUrl": "https://www.g2.com/products/new"
-  },
-  {
-    "name": "SaaSHub",
-    "startUrl": "https://www.saashub.com/submit-software"
-  },
-  {
-    "name": "GetApp",
-    "startUrl": "https://www.getapp.com/vendors/sign-up"
-  },
-  {
-    "name": "SoftwareAdvice",
-    "startUrl": "https://www.softwareadvice.com/vendors/sign-up"
-  },
-  {
-    "name": "Slant",
-    "startUrl": "https://www.slant.co/topics/new"
-  },
-  {
-    "name": "StackShare",
-    "startUrl": "https://stackshare.io/stack/new"
-  },
-  {
-    "name": "StartupStash",
-    "startUrl": "https://startupstash.com/submit-a-tool/"
-  },
-  {
-    "name": "AppSumo",
-    "startUrl": "https://appsumo.com/partners/"
-  },
-  {
-    "name": "BetaPage",
-    "startUrl": "https://betapage.co/submit"
-  },
-  {
-    "name": "StartupBlink",
-    "startUrl": "https://www.startupblink.com/submit-startup"
-  },
-  {
-    "name": "AngelList",
-    "startUrl": "https://angel.co/company/new"
-  },
-  {
-    "name": "Crunchbase",
-    "startUrl": "https://www.crunchbase.com/organization/new"
-  },
-  {
-    "name": "SideProjectors",
-    "startUrl": "https://www.sideprojectors.com/submit"
-  },
-  {
-    "name": "Indie Hackers",
-    "startUrl": "https://www.indiehackers.com/products/new"
-  },
-  {
-    "name": "HackerNews",
-    "startUrl": "https://news.ycombinator.com/submit"
-  },
-  {
-    "name": "Reddit",
-    "startUrl": "https://www.reddit.com/submit"
-  },
-  {
-    "name": "StartupBuffer",
-    "startUrl": "https://startupbuffer.com/submit"
-  },
-  {
-    "name": "Launching Next",
-    "startUrl": "https://www.launchingnext.com/submit/"
-  },
-  {
-    "name": "StartupTracker",
-    "startUrl": "https://startuptracker.io/submit"
-  },
-  {
-    "name": "StartupLister",
-    "startUrl": "https://startuplister.com/submit-startup"
-  },
-  {
-    "name": "Startups.co",
-    "startUrl": "https://www.startups.co/submit"
-  },
-  {
-    "name": "TechPluto",
-    "startUrl": "https://www.techpluto.com/submit-startup/"
-  },
-  {
-    "name": "Killer Startups",
-    "startUrl": "https://killerstartups.com/submit-your-startup"
-  },
-  {
-    "name": "All Startups",
-    "startUrl": "https://www.allstartups.info/Startups/Submit"
-  },
-  {
-    "name": "Webwiki",
-    "startUrl": "https://www.webwiki.com/submitwebsite"
-  },
-  {
-    "name": "F6S",
-    "startUrl": "https://www.f6s.com/companies/new"
-  },
-  {
-    "name": "Launching.io",
-    "startUrl": "https://www.launching.io/submit"
-  },
-  {
-    "name": "MakeUseOf",
-    "startUrl": "https://www.makeuseof.com/tag/submit-app/"
-  },
-  {
-    "name": "StartupRanking",
-    "startUrl": "https://www.startupranking.com/submit-startup"
-  },
-  {
-    "name": "Springwise",
-    "startUrl": "https://www.springwise.com/submit-your-innovation/"
-  },
-  {
-    "name": "Startup88",
-    "startUrl": "https://startup88.com/submit-startup"
-  },
-  {
-    "name": "100startups",
-    "startUrl": "https://www.100startups.io/submit"
-  },
-  {
-    "name": "StartupBase",
-    "startUrl": "https://startupbase.io/submit"
-  },
-  {
-    "name": "Startup Inspire",
-    "startUrl": "https://www.startupinspire.com/submit"
-  },
-  {
-    "name": "VentureBeat",
-    "startUrl": "https://venturebeat.com/submit-news/"
-  },
-  {
-    "name": "TechCrunch",
-    "startUrl": "https://techcrunch.com/got-a-tip/"
-  },
-  {
-    "name": "TheNextWeb",
-    "startUrl": "https://thenextweb.com/submit/"
-  },
-  {
-    "name": "Tech.eu",
-    "startUrl": "https://tech.eu/submit-news/"
-  },
-  {
-    "name": "Launched",
-    "startUrl": "https://launched.io/submit"
-  },
-  {
-    "name": "StartupButton",
-    "startUrl": "https://www.startupbutton.com/submit"
-  },
-  {
-    "name": "Beta Bound",
-    "startUrl": "https://www.betabound.com/submit"
-  },
-  {
-    "name": "Erlibird",
-    "startUrl": "https://erlibird.com/submit"
-  },
-  {
-    "name": "Startup Collections",
-    "startUrl": "https://startupcollections.com/submit"
-  },
-  {
-    "name": "Land-book",
-    "startUrl": "https://land-book.com/submit"
-  },
-  {
-    "name": "SaaSGenius",
-    "startUrl": "https://saasgenius.com/submit-product/"
-  },
-  {
-    "name": "DevHunt",
-    "startUrl": "https://devhunt.org/submit"
-  }
-]
+{
+  "sites": [
+    {
+      "domain": "producthunt.com",
+      "url": "https://www.producthunt.com/posts/new",
+      "name": "ProductHunt",
+      "plugin": "producthunt",
+      "active": true,
+      "forceDefaultFlow": false,
+      "notes": "Requires manual review if submission fails"
+    },
+    {
+      "domain": "betalist.com",
+      "url": "https://betalist.com/submit",
+      "name": "BetaList",
+      "plugin": "betalist",
+      "active": true,
+      "forceDefaultFlow": false,
+      "notes": "Popular startup directory, high visibility"
+    },
+    {
+      "domain": "alternativeto.net",
+      "url": "https://alternativeto.net/suggest/",
+      "name": "AlternativeTo",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "capterra.com",
+      "url": "https://www.capterra.com/vendors/sign-up",
+      "name": "Capterra",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": false,
+      "notes": "Enterprise directory, may require verification"
+    },
+    {
+      "domain": "g2.com",
+      "url": "https://www.g2.com/products/new",
+      "name": "G2",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": false,
+      "notes": "Enterprise directory, may require verification"
+    },
+    {
+      "domain": "saashub.com",
+      "url": "https://www.saashub.com/submit-software",
+      "name": "SaaSHub",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "getapp.com",
+      "url": "https://www.getapp.com/vendors/sign-up",
+      "name": "GetApp",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": false,
+      "notes": "Enterprise directory, may require verification"
+    },
+    {
+      "domain": "softwareadvice.com",
+      "url": "https://www.softwareadvice.com/vendors/sign-up",
+      "name": "SoftwareAdvice",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "slant.co",
+      "url": "https://www.slant.co/topics/new",
+      "name": "Slant",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "stackshare.io",
+      "url": "https://stackshare.io/stack/new",
+      "name": "StackShare",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupstash.com",
+      "url": "https://startupstash.com/submit-a-tool/",
+      "name": "StartupStash",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "appsumo.com",
+      "url": "https://appsumo.com/partners/",
+      "name": "AppSumo",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "betapage.co",
+      "url": "https://betapage.co/submit",
+      "name": "BetaPage",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupblink.com",
+      "url": "https://www.startupblink.com/submit-startup",
+      "name": "StartupBlink",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "angel.co",
+      "url": "https://angel.co/company/new",
+      "name": "AngelList",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "crunchbase.com",
+      "url": "https://www.crunchbase.com/organization/new",
+      "name": "Crunchbase",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "sideprojectors.com",
+      "url": "https://www.sideprojectors.com/submit",
+      "name": "SideProjectors",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "indiehackers.com",
+      "url": "https://www.indiehackers.com/products/new",
+      "name": "Indie Hackers",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "news.ycombinator.com",
+      "url": "https://news.ycombinator.com/submit",
+      "name": "HackerNews",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "reddit.com",
+      "url": "https://www.reddit.com/submit",
+      "name": "Reddit",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupbuffer.com",
+      "url": "https://startupbuffer.com/submit",
+      "name": "StartupBuffer",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "launchingnext.com",
+      "url": "https://www.launchingnext.com/submit/",
+      "name": "Launching Next",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startuptracker.io",
+      "url": "https://startuptracker.io/submit",
+      "name": "StartupTracker",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startuplister.com",
+      "url": "https://startuplister.com/submit-startup",
+      "name": "StartupLister",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startups.co",
+      "url": "https://www.startups.co/submit",
+      "name": "Startups.co",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "techpluto.com",
+      "url": "https://www.techpluto.com/submit-startup/",
+      "name": "TechPluto",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "killerstartups.com",
+      "url": "https://killerstartups.com/submit-your-startup",
+      "name": "Killer Startups",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "allstartups.info",
+      "url": "https://www.allstartups.info/Startups/Submit",
+      "name": "All Startups",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "webwiki.com",
+      "url": "https://www.webwiki.com/submitwebsite",
+      "name": "Webwiki",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "f6s.com",
+      "url": "https://www.f6s.com/companies/new",
+      "name": "F6S",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "launching.io",
+      "url": "https://www.launching.io/submit",
+      "name": "Launching.io",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "makeuseof.com",
+      "url": "https://www.makeuseof.com/tag/submit-app/",
+      "name": "MakeUseOf",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupranking.com",
+      "url": "https://www.startupranking.com/submit-startup",
+      "name": "StartupRanking",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "springwise.com",
+      "url": "https://www.springwise.com/submit-your-innovation/",
+      "name": "Springwise",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startup88.com",
+      "url": "https://startup88.com/submit-startup",
+      "name": "Startup88",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "100startups.io",
+      "url": "https://www.100startups.io/submit",
+      "name": "100startups",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupbase.io",
+      "url": "https://startupbase.io/submit",
+      "name": "StartupBase",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupinspire.com",
+      "url": "https://www.startupinspire.com/submit",
+      "name": "Startup Inspire",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "venturebeat.com",
+      "url": "https://venturebeat.com/submit-news/",
+      "name": "VentureBeat",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "techcrunch.com",
+      "url": "https://techcrunch.com/got-a-tip/",
+      "name": "TechCrunch",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "thenextweb.com",
+      "url": "https://thenextweb.com/submit/",
+      "name": "TheNextWeb",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "tech.eu",
+      "url": "https://tech.eu/submit-news/",
+      "name": "Tech.eu",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "launched.io",
+      "url": "https://launched.io/submit",
+      "name": "Launched",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupbutton.com",
+      "url": "https://www.startupbutton.com/submit",
+      "name": "StartupButton",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "betabound.com",
+      "url": "https://www.betabound.com/submit",
+      "name": "Beta Bound",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "erlibird.com",
+      "url": "https://erlibird.com/submit",
+      "name": "Erlibird",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "startupcollections.com",
+      "url": "https://startupcollections.com/submit",
+      "name": "Startup Collections",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "land-book.com",
+      "url": "https://land-book.com/submit",
+      "name": "Land-book",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "saasgenius.com",
+      "url": "https://saasgenius.com/submit-product/",
+      "name": "SaaSGenius",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    },
+    {
+      "domain": "devhunt.org",
+      "url": "https://devhunt.org/submit",
+      "name": "DevHunt",
+      "plugin": "default",
+      "active": true,
+      "forceDefaultFlow": true,
+      "notes": ""
+    }
+  ]
+}

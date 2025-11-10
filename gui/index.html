@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directory Signup Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .controls {
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .sites-grid {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+        }
+        
+        .site-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .site-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        .site-card.inactive {
+            opacity: 0.6;
+            background: #f8f9fa;
+        }
+        
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+        
+        .site-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        
+        .site-domain {
+            font-size: 13px;
+            color: #718096;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e0;
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        .site-info {
+            margin: 16px 0;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 80px;
+        }
+        
+        .info-value {
+            color: #718096;
+            flex: 1;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-default {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .badge-custom {
+            background: #667eea;
+            color: white;
+        }
+        
+        .notes {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #4a5568;
+            margin-top: 12px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .site-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+            flex: 1;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+        
+        .modal-header {
+            margin-bottom: 24px;
+        }
+        
+        .modal-header h2 {
+            font-size: 24px;
+            color: #2d3748;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+        
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Directory Signup Management</h1>
+            <p>Manage and orchestrate your directory submission workflow</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number" id="totalSites">0</div>
+                <div class="label">Total Sites</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="activeSites">0</div>
+                <div class="label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="customPlugins">0</div>
+                <div class="label">Custom Plugins</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="defaultFlow">0</div>
+                <div class="label">Default Flow</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search sites by name or domain...">
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-secondary" id="filterAll">All Sites</button>
+                <button class="btn btn-secondary" id="filterActive">Active Only</button>
+                <button class="btn btn-secondary" id="filterInactive">Inactive Only</button>
+            </div>
+            <button class="btn btn-primary" id="exportBtn">💾 Export Config</button>
+            <button class="btn btn-primary" id="importBtn">📤 Import Config</button>
+        </div>
+        
+        <div class="sites-grid" id="sitesGrid">
+            <!-- Sites will be dynamically loaded here -->
+        </div>
+    </div>
+    
+    <!-- Edit Site Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Site Configuration</h2>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editIndex">
+                
+                <div class="form-group">
+                    <label for="editName">Site Name</label>
+                    <input type="text" id="editName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editDomain">Domain</label>
+                    <input type="text" id="editDomain" required readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editUrl">URL</label>
+                    <input type="url" id="editUrl" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPlugin">Plugin</label>
+                    <select id="editPlugin">
+                        <option value="default">Default</option>
+                        <option value="producthunt">ProductHunt</option>
+                        <option value="betalist">BetaList</option>
+                    </select>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="editActive">
+                    <label for="editActive">Active</label>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="editForceDefault">
+                    <label for="editForceDefault">Force Default Flow</label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editNotes">Notes</label>
+                    <textarea id="editNotes" placeholder="Add any special instructions or notes..."></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // State management
+        let sites = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+        
+        // Load sites data
+        async function loadSites() {
+            try {
+                // In production, this would fetch from an API or GitHub
+                // For now, we'll load from a JSON file
+                const response = await fetch('../sites.json');
+                const data = await response.json();
+                sites = data.sites || data;
+                
+                // Update stats
+                updateStats();
+                
+                // Render sites
+                renderSites();
+            } catch (error) {
+                console.error('Error loading sites:', error);
+                showError('Failed to load sites configuration');
+            }
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const total = sites.length;
+            const active = sites.filter(s => s.active !== false).length;
+            const customPlugins = sites.filter(s => s.plugin && s.plugin !== 'default').length;
+            const defaultFlow = sites.filter(s => s.forceDefaultFlow === true).length;
+            
+            document.getElementById('totalSites').textContent = total;
+            document.getElementById('activeSites').textContent = active;
+            document.getElementById('customPlugins').textContent = customPlugins;
+            document.getElementById('defaultFlow').textContent = defaultFlow;
+        }
+        
+        // Filter sites
+        function filterSites() {
+            let filtered = sites;
+            
+            // Apply filter
+            if (currentFilter === 'active') {
+                filtered = filtered.filter(s => s.active !== false);
+            } else if (currentFilter === 'inactive') {
+                filtered = filtered.filter(s => s.active === false);
+            }
+            
+            // Apply search
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(s => 
+                    (s.name && s.name.toLowerCase().includes(query)) ||
+                    (s.domain && s.domain.toLowerCase().includes(query))
+                );
+            }
+            
+            return filtered;
+        }
+        
+        // Render sites grid
+        function renderSites() {
+            const grid = document.getElementById('sitesGrid');
+            const filtered = filterSites();
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <p style="font-size: 18px; font-weight: 600;">No sites found</p>
+                        <p>Try adjusting your filters or search query</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filtered.map((site, index) => `
+                <div class="site-card ${site.active === false ? 'inactive' : ''}" data-index="${sites.indexOf(site)}">
+                    <div class="site-header">
+                        <div>
+                            <div class="site-name">${site.name || 'Unknown'}</div>
+                            <div class="site-domain">${site.domain || ''}</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${site.active !== false ? 'checked' : ''} 
+                                   onchange="toggleSiteActive(${sites.indexOf(site)})">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="site-info">
+                        <div class="info-row">
+                            <span class="info-label">Plugin:</span>
+                            <span class="badge ${site.plugin === 'default' ? 'badge-default' : 'badge-custom'}">
+                                ${site.plugin || 'default'}
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Default Flow:</span>
+                            <span class="info-value">${site.forceDefaultFlow ? '✓ Yes' : '✗ No'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">URL:</span>
+                            <span class="info-value" style="font-size: 12px; word-break: break-all;">
+                                ${(site.url || site.startUrl || '').substring(0, 50)}${(site.url || site.startUrl || '').length > 50 ? '...' : ''}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    ${site.notes ? `<div class="notes">${site.notes}</div>` : ''}
+                    
+                    <div class="site-actions">
+                        <button class="btn btn-secondary btn-small" onclick="editSite(${sites.indexOf(site)})">
+                            ✏️ Edit
+                        </button>
+                        <button class="btn btn-secondary btn-small" onclick="testSite(${sites.indexOf(site)})">
+                            🧪 Test
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Toggle site active status
+        function toggleSiteActive(index) {
+            sites[index].active = !sites[index].active;
+            updateStats();
+            renderSites();
+        }
+        
+        // Edit site
+        function editSite(index) {
+            const site = sites[index];
+            
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editName').value = site.name || '';
+            document.getElementById('editDomain').value = site.domain || '';
+            document.getElementById('editUrl').value = site.url || site.startUrl || '';
+            document.getElementById('editPlugin').value = site.plugin || 'default';
+            document.getElementById('editActive').checked = site.active !== false;
+            document.getElementById('editForceDefault').checked = site.forceDefaultFlow === true;
+            document.getElementById('editNotes').value = site.notes || '';
+            
+            document.getElementById('editModal').classList.add('show');
+        }
+        
+        // Test site
+        function testSite(index) {
+            const site = sites[index];
+            alert(`Testing ${site.name}...\n\nThis would trigger a test run with dummy data.\n\nPlugin: ${site.plugin || 'default'}\nURL: ${site.url || site.startUrl}`);
+        }
+        
+        // Save edited site
+        document.getElementById('editForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const index = parseInt(document.getElementById('editIndex').value);
+            
+            sites[index] = {
+                ...sites[index],
+                name: document.getElementById('editName').value,
+                domain: document.getElementById('editDomain').value,
+                url: document.getElementById('editUrl').value,
+                plugin: document.getElementById('editPlugin').value,
+                active: document.getElementById('editActive').checked,
+                forceDefaultFlow: document.getElementById('editForceDefault').checked,
+                notes: document.getElementById('editNotes').value
+            };
+            
+            document.getElementById('editModal').classList.remove('show');
+            updateStats();
+            renderSites();
+        });
+        
+        // Cancel edit
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('editModal').classList.remove('show');
+        });
+        
+        // Close modal on background click
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editModal')) {
+                document.getElementById('editModal').classList.remove('show');
+            }
+        });
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderSites();
+        });
+        
+        // Filter buttons
+        document.getElementById('filterAll').addEventListener('click', () => {
+            currentFilter = 'all';
+            renderSites();
+        });
+        
+        document.getElementById('filterActive').addEventListener('click', () => {
+            currentFilter = 'active';
+            renderSites();
+        });
+        
+        document.getElementById('filterInactive').addEventListener('click', () => {
+            currentFilter = 'inactive';
+            renderSites();
+        });
+        
+        // Export configuration
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const dataStr = JSON.stringify({ sites }, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'sites-config.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+        
+        // Import configuration
+        document.getElementById('importBtn').addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        sites = data.sites || data;
+                        updateStats();
+                        renderSites();
+                        alert('Configuration imported successfully!');
+                    } catch (error) {
+                        alert('Error importing configuration: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        });
+        
+        // Initialize
+        loadSites();
+    </script>
+</body>
+</html>
