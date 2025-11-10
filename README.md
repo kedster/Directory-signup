@@ -27,6 +27,13 @@ This project now includes a comprehensive management system:
 
 See [MANAGEMENT_GUI.md](./MANAGEMENT_GUI.md) for complete documentation.
 
+## 📚 Documentation
+
+- **[Cloudflare Deployment Guide](./CLOUDFLARE_DEPLOYMENT.md)** - Deploy the Worker API to Cloudflare
+- **[Apify Workflow Guide](./APIFY_WORKFLOW.md)** - Set up and test the Apify automation workflow
+- **[Management GUI Documentation](./MANAGEMENT_GUI.md)** - Use the visual dashboard
+- **[Implementation Summary](./IMPLEMENTATION_SUMMARY.md)** - Technical architecture details
+
 ## Apify Actor Structure
 
 This project follows Apify's recommended structure for Node.js actors:
@@ -50,8 +57,32 @@ This project follows Apify's recommended structure for Node.js actors:
 │   ├── index.js           ← API endpoints
 │   └── wrangler.toml      ← Worker configuration
 ├── README.md              ← This file
+├── CLOUDFLARE_DEPLOYMENT.md ← Cloudflare Worker deployment guide
+├── APIFY_WORKFLOW.md      ← Apify workflow setup guide
 └── MANAGEMENT_GUI.md      ← GUI & orchestration documentation
 ```
+
+## Quick Start
+
+### 🚀 For Apify Platform
+
+1. **[Set up on Apify](./APIFY_WORKFLOW.md#apify-platform-setup)** - Create actor from GitHub
+2. **[Configure input](./APIFY_WORKFLOW.md#input-configuration)** - Add your product details
+3. **[Run workflow](./APIFY_WORKFLOW.md#running-the-workflow)** - Start automation
+4. **[View results](./APIFY_WORKFLOW.md#monitoring--results)** - Check success/failures
+
+### ⚙️ For Cloudflare Workers
+
+1. **[Install Wrangler CLI](./CLOUDFLARE_DEPLOYMENT.md#prerequisites)** - Set up tools
+2. **[Configure secrets](./CLOUDFLARE_DEPLOYMENT.md#configuration)** - Add GitHub token
+3. **[Deploy worker](./CLOUDFLARE_DEPLOYMENT.md#deployment)** - Push to Cloudflare
+4. **[Test API](./CLOUDFLARE_DEPLOYMENT.md#testing)** - Verify endpoints
+
+### 🎨 For Local Development
+
+See [Installation](#installation) and [Usage](#usage) sections below.
+
+---
 
 ## Installation
 
