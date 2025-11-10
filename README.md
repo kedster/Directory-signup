@@ -1,16 +1,31 @@
 # Directory-signup
 
-Automate SaaS listing directory signups using Puppeteer and Apify. This Apify Actor helps you submit your product to multiple directory websites efficiently.
+Automate SaaS listing directory signups using Puppeteer and Apify. This Apify Actor helps you submit your product to multiple directory websites efficiently, with a management GUI for orchestration and control.
 
 ## Features
 
 - 🚀 Process 50 directory sites automatically
+- 🎨 **Management GUI** for visual control and orchestration
+- 🔌 **Plugin system** for site-specific customization
 - 🔄 Concurrent processing (5 sites at a time)
 - 📸 Automatic screenshot capture on failures
 - 📄 HTML snapshot saving for debugging
 - 🎯 Site-specific selector overrides
 - 📊 Detailed reporting and results tracking
 - 🤖 Apify platform integration for scalable automation
+- ⚙️ **Cloudflare Worker API** for automated GitHub commits (optional)
+
+## New: Management GUI & Orchestration
+
+This project now includes a comprehensive management system:
+
+- **Visual Dashboard**: Manage all directory sites from a web interface
+- **Plugin Architecture**: Modular system for custom site handling
+- **Dynamic Configuration**: Enable/disable sites, assign plugins, add notes
+- **Cloudflare Pages Compatible**: Deploy GUI as static site
+- **Optional Worker API**: Automated GitHub commits and Apify triggering
+
+See [MANAGEMENT_GUI.md](./MANAGEMENT_GUI.md) for complete documentation.
 
 ## Apify Actor Structure
 
@@ -19,12 +34,23 @@ This project follows Apify's recommended structure for Node.js actors:
 ```
 /auto-directory-signup/
 ├── main.js                ← Entry point (wrapped in Apify.main())
+├── plugin-registry.js     ← Plugin loader and manager
 ├── package.json           ← Dependencies & ES module config
 ├── apify.json             ← Apify actor configuration
-├── sites.json             ← Directory sites configuration
+├── sites.json             ← Directory sites configuration (enhanced)
 ├── overrides.json         ← Site-specific selectors
 ├── test.js                ← Test suite
-└── README.md              ← This file
+├── plugins/               ← Modular plugin system
+│   ├── default.js         ← Standard form-filling flow
+│   ├── producthunt.js     ← ProductHunt-specific plugin
+│   └── betalist.js        ← BetaList-specific plugin
+├── gui/                   ← Management GUI
+│   └── index.html         ← Single-page management interface
+├── worker/                ← Cloudflare Worker API (optional)
+│   ├── index.js           ← API endpoints
+│   └── wrangler.toml      ← Worker configuration
+├── README.md              ← This file
+└── MANAGEMENT_GUI.md      ← GUI & orchestration documentation
 ```
 
 ## Installation

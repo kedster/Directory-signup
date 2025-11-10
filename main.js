@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import pluginRegistry from './plugin-registry.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +23,16 @@ async function ensureDirectories() {
 // Load sites configuration
 async function loadSites() {
   const data = await fs.readFile('./sites.json', 'utf8');
-  return JSON.parse(data);
+  const sitesData = JSON.parse(data);
+  
+  // Support both old format (array) and new format (object with sites array)
+  if (Array.isArray(sitesData)) {
+    return sitesData;
+  } else if (sitesData.sites && Array.isArray(sitesData.sites)) {
+    return sitesData.sites;
+  }
+  
+  throw new Error('Invalid sites.json format');
 }
 
 // Load overrides configuration
@@ -67,12 +77,25 @@ async function saveHTMLSnapshot(page, siteName, timestamp) {
 
 // Process a single site
 async function processSite(site, overrides, browser, listing) {
-  const siteName = site.name.replace(/[^a-zA-Z0-9]/g, '_');
+  const siteName = (site.name || 'unknown').replace(/[^a-zA-Z0-9]/g, '_');
   const startTime = Date.now();
   const timestamp = Date.now();
   
   console.log(`\n[${siteName}] Starting signup process...`);
-  console.log(`  URL: ${site.startUrl}`);
+  console.log(`  URL: ${site.url || site.startUrl}`);
+  console.log(`  Plugin: ${site.plugin || 'default'}`);
+  console.log(`  Active: ${site.active !== false}`);
+  
+  // Skip inactive sites
+  if (site.active === false) {
+    console.log(`  ⊘ Skipping inactive site`);
+    return {
+      site: site.name,
+      status: 'skipped',
+      message: 'Site is marked as inactive',
+      duration: 0
+    };
+  }
   
   let page;
   try {
@@ -83,48 +106,32 @@ async function processSite(site, overrides, browser, listing) {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     
     // Navigate to the site
-    console.log(`  Navigating to ${site.startUrl}...`);
-    await page.goto(site.startUrl, {
+    const siteUrl = site.url || site.startUrl;
+    console.log(`  Navigating to ${siteUrl}...`);
+    await page.goto(siteUrl, {
       waitUntil: 'networkidle2',
       timeout: TIMEOUT
     });
     
-    // Get domain-specific overrides
-    const domain = extractDomain(site.startUrl);
-    const siteOverrides = overrides[domain] || {};
+    // Use plugin system to process the site
+    const pluginResult = await pluginRegistry.processSite(site, page, listing, overrides);
     
-    // Check if we have specific selectors for this site
-    if (siteOverrides.selectors) {
-      console.log(`  Using custom selectors for ${domain}`);
-      await applyCustomSelectors(page, siteOverrides.selectors, listing);
-    } else {
-      console.log(`  No custom selectors found for ${domain}, would need manual inspection`);
+    const duration = Date.now() - startTime;
+    
+    if (pluginResult.status === 'success') {
+      console.log(`  ✓ Success! (${duration}ms)`);
+    } else if (pluginResult.status === 'needs_override') {
+      console.log(`  ⚠ Needs configuration (${duration}ms)`);
       // Save diagnostic information
       await saveScreenshot(page, siteName, timestamp);
       await saveHTMLSnapshot(page, siteName, timestamp);
-      
-      const duration = Date.now() - startTime;
-      return {
-        site: site.name,
-        status: 'needs_override',
-        message: 'No custom selectors configured for this site',
-        duration,
-        screenshotPath: path.join(SCREENSHOTS_DIR, `${siteName}_${timestamp}.png`),
-        htmlPath: path.join(HTML_SNAPSHOTS_DIR, `${siteName}_${timestamp}.html`)
-      };
+      pluginResult.screenshotPath = path.join(SCREENSHOTS_DIR, `${siteName}_${timestamp}.png`);
+      pluginResult.htmlPath = path.join(HTML_SNAPSHOTS_DIR, `${siteName}_${timestamp}.html`);
     }
-    
-    // Wait for custom wait selector if specified
-    if (siteOverrides.waitForSelector) {
-      await page.waitForSelector(siteOverrides.waitForSelector, { timeout: 5000 });
-    }
-    
-    const duration = Date.now() - startTime;
-    console.log(`  ✓ Success! (${duration}ms)`);
     
     return {
       site: site.name,
-      status: 'success',
+      ...pluginResult,
       duration,
       listing: listing
     };
@@ -252,10 +259,14 @@ function generateReport(results) {
   const success = results.filter(r => r.status === 'success');
   const needsOverride = results.filter(r => r.status === 'needs_override');
   const errors = results.filter(r => r.status === 'error');
+  const skipped = results.filter(r => r.status === 'skipped');
+  const needsAuth = results.filter(r => r.status === 'needs_auth');
   
   console.log(`\nTotal sites processed: ${results.length}`);
   console.log(`✓ Success: ${success.length}`);
   console.log(`⚠ Needs override: ${needsOverride.length}`);
+  console.log(`⊘ Skipped (inactive): ${skipped.length}`);
+  console.log(`🔐 Needs authentication: ${needsAuth.length}`);
   console.log(`✗ Errors: ${errors.length}`);
   
   if (needsOverride.length > 0) {
@@ -267,6 +278,15 @@ function generateReport(results) {
       console.log(`  Screenshot: ${result.screenshotPath}`);
       console.log(`  HTML: ${result.htmlPath}`);
       console.log(`  → Open these files to create custom selectors`);
+    });
+  }
+  
+  if (needsAuth.length > 0) {
+    console.log('\n' + '-'.repeat(60));
+    console.log('Sites needing authentication:');
+    console.log('-'.repeat(60));
+    needsAuth.forEach(result => {
+      console.log(`\n${result.site}: ${result.message}`);
     });
   }
   
@@ -300,6 +320,9 @@ Apify.main(async () => {
   try {
     // Setup
     await ensureDirectories();
+    
+    // Load plugins
+    await pluginRegistry.loadPlugins();
     
     // Get input from Apify or use defaults
     const input = await Apify.getInput() || {};

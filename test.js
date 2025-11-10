@@ -24,7 +24,10 @@ async function runTests() {
   // Test 1: Load sites.json
   try {
     const sitesData = await fs.readFile('./sites.json', 'utf8');
-    const sites = JSON.parse(sitesData);
+    const sitesJson = JSON.parse(sitesData);
+    
+    // Support both old format (array) and new format (object with sites array)
+    const sites = Array.isArray(sitesJson) ? sitesJson : (sitesJson.sites || []);
     
     if (sites.length === 50) {
       console.log('✓ Test 1: sites.json contains exactly 50 sites');
@@ -35,9 +38,11 @@ async function runTests() {
     }
     
     // Verify each site has required fields
-    const allValid = sites.every(site => site.name && site.startUrl);
+    const allValid = sites.every(site => 
+      (site.name || site.domain) && (site.startUrl || site.url)
+    );
     if (allValid) {
-      console.log('✓ Test 2: All sites have name and startUrl');
+      console.log('✓ Test 2: All sites have required fields');
       passed++;
     } else {
       console.log('✗ Test 2: Some sites missing required fields');
@@ -179,6 +184,98 @@ async function runTests() {
     }
   } catch (error) {
     console.log('✗ Test 9:', error.message);
+    failed++;
+  }
+
+  // Test 10: Verify plugin system files exist
+  try {
+    const pluginRegistryExists = await fs.access('./plugin-registry.js').then(() => true).catch(() => false);
+    const defaultPluginExists = await fs.access('./plugins/default.js').then(() => true).catch(() => false);
+    
+    if (pluginRegistryExists && defaultPluginExists) {
+      console.log('✓ Test 10: Plugin system files exist');
+      passed++;
+    } else {
+      console.log('✗ Test 10: Plugin system files missing');
+      if (!pluginRegistryExists) console.log('  Missing: plugin-registry.js');
+      if (!defaultPluginExists) console.log('  Missing: plugins/default.js');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 10:', error.message);
+    failed++;
+  }
+
+  // Test 11: Verify GUI exists
+  try {
+    const guiExists = await fs.access('./gui/index.html').then(() => true).catch(() => false);
+    
+    if (guiExists) {
+      console.log('✓ Test 11: Management GUI exists');
+      passed++;
+    } else {
+      console.log('✗ Test 11: Management GUI not found');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 11:', error.message);
+    failed++;
+  }
+
+  // Test 12: Verify enhanced sites.json schema
+  try {
+    const sitesData = await fs.readFile('./sites.json', 'utf8');
+    const sitesJson = JSON.parse(sitesData);
+    const sites = Array.isArray(sitesJson) ? sitesJson : (sitesJson.sites || []);
+    
+    // Check if sites have new schema fields
+    const hasEnhancedFields = sites.some(site => 
+      site.domain !== undefined && 
+      site.plugin !== undefined && 
+      site.active !== undefined
+    );
+    
+    if (hasEnhancedFields) {
+      console.log('✓ Test 12: sites.json uses enhanced schema with GUI control fields');
+      passed++;
+    } else {
+      console.log('✗ Test 12: sites.json missing enhanced schema fields (domain, plugin, active)');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 12:', error.message);
+    failed++;
+  }
+
+  // Test 13: Verify Worker API exists
+  try {
+    const workerExists = await fs.access('./worker/index.js').then(() => true).catch(() => false);
+    
+    if (workerExists) {
+      console.log('✓ Test 13: Cloudflare Worker API exists');
+      passed++;
+    } else {
+      console.log('✗ Test 13: Cloudflare Worker API not found');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 13:', error.message);
+    failed++;
+  }
+
+  // Test 14: Verify MANAGEMENT_GUI.md documentation exists
+  try {
+    const docsExist = await fs.access('./MANAGEMENT_GUI.md').then(() => true).catch(() => false);
+    
+    if (docsExist) {
+      console.log('✓ Test 14: Management GUI documentation exists');
+      passed++;
+    } else {
+      console.log('✗ Test 14: MANAGEMENT_GUI.md not found');
+      failed++;
+    }
+  } catch (error) {
+    console.log('✗ Test 14:', error.message);
     failed++;
   }
 

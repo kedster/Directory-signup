@@ -7,3 +7,10 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 *.log
+gui/node_modules/
+gui/dist/
+gui/build/
+worker/.wrangler/
+worker/node_modules/
+.env
+.env.local
