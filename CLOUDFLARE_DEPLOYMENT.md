@@ -144,7 +144,13 @@ The worker uses Cloudflare secrets for sensitive data. Configure them using Wran
    ```
    When prompted, paste your Apify API token.
 
-4. **Apify Actor ID** (as variable)
+4. **Anti-Captcha API Key** (for solving CAPTCHAs automatically)
+   ```bash
+   wrangler secret put ANTICAPTCHA_KEY
+   ```
+   When prompted, paste your Anti-Captcha API key from services like 2Captcha or Anti-Captcha.
+
+5. **Apify Actor ID** (as variable)
    ```toml
    [vars]
    APIFY_ACTOR_ID = "your-actor-id"

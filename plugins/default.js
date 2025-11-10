@@ -1,6 +1,10 @@
 /**
  * Default Plugin - Standard form-filling flow
  * Handles most directory sites with common form patterns
+ * 
+ * Note: For CAPTCHA handling, plugins can access the ANTICAPTCHA_KEY
+ * environment variable via process.env.ANTICAPTCHA_KEY to integrate
+ * with services like 2Captcha or Anti-Captcha for automatic solving.
  */
 
 export default class DefaultPlugin {

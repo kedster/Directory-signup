@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "buildTag": "latest",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "ANTICAPTCHA_KEY": ""
   }
 }

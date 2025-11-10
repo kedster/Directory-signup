@@ -8,6 +8,7 @@ Automate SaaS listing directory signups using Puppeteer and Apify. This Apify Ac
 - 🎨 **Management GUI** for visual control and orchestration
 - 🔌 **Plugin system** for site-specific customization
 - 🔄 Concurrent processing (5 sites at a time)
+- 🤖 **Anti-CAPTCHA support** for automated CAPTCHA solving
 - 📸 Automatic screenshot capture on failures
 - 📄 HTML snapshot saving for debugging
 - 🎯 Site-specific selector overrides
@@ -150,6 +151,14 @@ npm start
 ```
 
 ## Configuration
+
+### Environment Variables
+
+The following environment variables can be configured:
+
+- `ANTICAPTCHA_KEY` - API key for anti-captcha service (optional, for sites with CAPTCHA)
+  - Supports services like [2Captcha](https://2captcha.com) or [Anti-Captcha](https://anti-captcha.com)
+  - Set in Apify Actor settings or as environment variable locally
 
 ### sites.json
 
