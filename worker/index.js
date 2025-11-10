@@ -20,14 +20,37 @@ function handleOptions(request) {
 // Get sites configuration
 async function getSites(env) {
   try {
-    // In production, this would fetch from GitHub API or KV storage
-    // For now, return a placeholder response
+    // Fetch sites.json from GitHub
+    const owner = env.GITHUB_OWNER || 'kedster';
+    const repo = env.GITHUB_REPO || 'Directory-signup';
+    const branch = env.GITHUB_BRANCH || 'main';
+    const githubToken = env.GITHUB_TOKEN;
+    
+    // Construct GitHub API URL for raw file content
+    const githubApiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/sites.json?ref=${branch}`;
+    
+    const headers = {
+      'User-Agent': 'Cloudflare-Worker',
+      'Accept': 'application/vnd.github.v3.raw'
+    };
+    
+    // Add auth header if token is available
+    if (githubToken) {
+      headers['Authorization'] = `token ${githubToken}`;
+    }
+    
+    const response = await fetch(githubApiUrl, { headers });
+    
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const sitesData = await response.json();
+    
     return new Response(JSON.stringify({
       success: true,
       message: 'Fetched sites configuration',
-      data: {
-        sites: []
-      }
+      data: sitesData
     }), {
       status: 200,
       headers: {
@@ -68,18 +91,78 @@ async function updateSites(request, env) {
       });
     }
     
-    // In production, this would:
-    // 1. Validate the sites data
-    // 2. Create a commit to GitHub with the updated sites.json
-    // 3. Return the commit details
+    // Validate GitHub token is available
+    const githubToken = env.GITHUB_TOKEN;
+    if (!githubToken) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'GitHub token not configured. Please set GITHUB_TOKEN secret.'
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders
+        }
+      });
+    }
     
-    // For now, return a success response
+    const owner = env.GITHUB_OWNER || 'kedster';
+    const repo = env.GITHUB_REPO || 'Directory-signup';
+    const branch = env.GITHUB_BRANCH || 'main';
+    
+    // Step 1: Get current file to retrieve its SHA
+    const getFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/sites.json?ref=${branch}`;
+    const getFileResponse = await fetch(getFileUrl, {
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'User-Agent': 'Cloudflare-Worker',
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    
+    if (!getFileResponse.ok) {
+      throw new Error(`Failed to get current file: ${getFileResponse.status}`);
+    }
+    
+    const currentFile = await getFileResponse.json();
+    const currentSha = currentFile.sha;
+    
+    // Step 2: Create updated content
+    const updatedContent = JSON.stringify({ sites }, null, 2);
+    const base64Content = btoa(updatedContent);
+    
+    // Step 3: Commit the changes
+    const updateFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/sites.json`;
+    const updateFileResponse = await fetch(updateFileUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'User-Agent': 'Cloudflare-Worker',
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update sites configuration via Management GUI',
+        content: base64Content,
+        sha: currentSha,
+        branch: branch
+      })
+    });
+    
+    if (!updateFileResponse.ok) {
+      const errorData = await updateFileResponse.json();
+      throw new Error(`Failed to update file: ${errorData.message || updateFileResponse.statusText}`);
+    }
+    
+    const commitData = await updateFileResponse.json();
+    
     return new Response(JSON.stringify({
       success: true,
       message: 'Sites configuration updated successfully',
       commit: {
-        sha: 'mock-sha',
-        message: 'Update sites configuration via GUI'
+        sha: commitData.commit.sha,
+        message: commitData.commit.message,
+        url: commitData.commit.html_url
       }
     }), {
       status: 200,

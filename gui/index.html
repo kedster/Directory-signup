@@ -397,6 +397,16 @@
             to { transform: translateY(0); opacity: 1; }
         }
         
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -446,7 +456,8 @@
                 <button class="btn btn-secondary" id="filterActive">Active Only</button>
                 <button class="btn btn-secondary" id="filterInactive">Inactive Only</button>
             </div>
-            <button class="btn btn-primary" id="exportBtn">💾 Export Config</button>
+            <button class="btn btn-primary" id="saveBtn">💾 Save Changes</button>
+            <button class="btn btn-primary" id="exportBtn">📥 Export Config</button>
             <button class="btn btn-primary" id="importBtn">📤 Import Config</button>
         </div>
         
@@ -517,24 +528,119 @@
         let currentFilter = 'all';
         let searchQuery = '';
         
-        // Load sites data
+        // API configuration - can be overridden by setting window.API_BASE_URL
+        const API_BASE_URL = window.API_BASE_URL || 'https://directory-signup-api.kedster.workers.dev';
+        
+        // Load sites data with multiple fallback strategies
         async function loadSites() {
             try {
-                // In production, this would fetch from an API or GitHub
-                // For now, we'll load from a JSON file
-                const response = await fetch('../sites.json');
-                const data = await response.json();
+                let data = null;
+                let loadMethod = 'unknown';
+                
+                // Strategy 1: Try loading from Cloudflare Worker API
+                try {
+                    console.log('Attempting to load sites from Worker API...');
+                    const apiResponse = await fetch(`${API_BASE_URL}/api/sites`);
+                    if (apiResponse.ok) {
+                        const apiData = await apiResponse.json();
+                        if (apiData.success && apiData.data) {
+                            data = apiData.data;
+                            loadMethod = 'Worker API';
+                            console.log('✓ Successfully loaded from Worker API');
+                        }
+                    }
+                } catch (apiError) {
+                    console.warn('Worker API unavailable:', apiError.message);
+                }
+                
+                // Strategy 2: Try loading from relative path (for local/Pages deployment)
+                if (!data) {
+                    try {
+                        console.log('Attempting to load sites from relative path...');
+                        const response = await fetch('../sites.json');
+                        if (response.ok) {
+                            data = await response.json();
+                            loadMethod = 'Relative Path';
+                            console.log('✓ Successfully loaded from relative path');
+                        }
+                    } catch (relativeError) {
+                        console.warn('Relative path unavailable:', relativeError.message);
+                    }
+                }
+                
+                // Strategy 3: Try loading from GitHub raw URL as last resort
+                if (!data) {
+                    try {
+                        console.log('Attempting to load sites from GitHub...');
+                        const githubUrl = 'https://raw.githubusercontent.com/kedster/Directory-signup/main/sites.json';
+                        const response = await fetch(githubUrl);
+                        if (response.ok) {
+                            data = await response.json();
+                            loadMethod = 'GitHub Raw';
+                            console.log('✓ Successfully loaded from GitHub');
+                        }
+                    } catch (githubError) {
+                        console.warn('GitHub unavailable:', githubError.message);
+                    }
+                }
+                
+                // Check if we successfully loaded data
+                if (!data) {
+                    throw new Error('Unable to load sites from any source');
+                }
+                
+                // Extract sites array
                 sites = data.sites || data;
+                
+                if (!Array.isArray(sites) || sites.length === 0) {
+                    throw new Error('No sites found in configuration');
+                }
+                
+                console.log(`✓ Loaded ${sites.length} sites using ${loadMethod}`);
                 
                 // Update stats
                 updateStats();
                 
                 // Render sites
                 renderSites();
+                
+                // Show success message
+                showNotification(`Loaded ${sites.length} sites from ${loadMethod}`, 'success');
             } catch (error) {
                 console.error('Error loading sites:', error);
-                showError('Failed to load sites configuration');
+                showError('Failed to load sites configuration. Please check the console for details.');
             }
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+                font-size: 14px;
+                max-width: 400px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Show error
+        function showError(message) {
+            showNotification(message, 'error');
         }
         
         // Update statistics
@@ -640,6 +746,39 @@
             sites[index].active = !sites[index].active;
             updateStats();
             renderSites();
+            showNotification(`Site ${sites[index].name} ${sites[index].active ? 'activated' : 'deactivated'}`, 'success');
+        }
+        
+        // Save changes to repository
+        async function saveChanges() {
+            try {
+                showNotification('Saving changes to repository...', 'info');
+                
+                const response = await fetch(`${API_BASE_URL}/api/sites`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sites })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Changes saved to repository successfully!', 'success');
+                    return true;
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                showError(`Failed to save changes: ${error.message}. You can export the configuration manually.`);
+                return false;
+            }
         }
         
         // Edit site
@@ -665,7 +804,7 @@
         }
         
         // Save edited site
-        document.getElementById('editForm').addEventListener('submit', (e) => {
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const index = parseInt(document.getElementById('editIndex').value);
@@ -684,6 +823,9 @@
             document.getElementById('editModal').classList.remove('show');
             updateStats();
             renderSites();
+            
+            // Show notification
+            showNotification('Site configuration updated. Click "Save Changes" to commit to repository.', 'success');
         });
         
         // Cancel edit
@@ -718,6 +860,11 @@
         document.getElementById('filterInactive').addEventListener('click', () => {
             currentFilter = 'inactive';
             renderSites();
+        });
+        
+        // Save changes to repository
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            await saveChanges();
         });
         
         // Export configuration
