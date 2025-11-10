@@ -2,6 +2,8 @@
 
 This guide provides step-by-step instructions for deploying and configuring the Directory Signup Management API using Cloudflare Workers.
 
+> **✅ IMPLEMENTATION STATUS**: The Cloudflare Worker is now fully implemented with GitHub API integration. The `getSites()` and `updateSites()` functions fetch from and commit to GitHub respectively. Follow this guide to deploy and configure your worker.
+
 ## Table of Contents
 
 - [Overview](#overview)

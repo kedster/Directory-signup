@@ -5,3 +5,10 @@ compatibility_date = "2024-01-01"
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
+GITHUB_OWNER = "kedster"
+GITHUB_REPO = "Directory-signup"
+GITHUB_BRANCH = "main"
+
+# Secrets (set using: wrangler secret put GITHUB_TOKEN)
+# GITHUB_TOKEN - required for GitHub API operations
+# APIFY_API_TOKEN - optional, for triggering actor runs
