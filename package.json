@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node main.js",
-    "test": "node test.js"
+    "test": "node test.js",
+    "sync-sites": "cp sites.json gui/sites.json && echo 'Synced sites.json to gui folder'"
   },
   "keywords": [
     "puppeteer",

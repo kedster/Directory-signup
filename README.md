@@ -166,6 +166,15 @@ Contains the list of directory sites to process. Each entry has:
 - `name` - Display name of the directory
 - `startUrl` - URL to the signup/submission page
 
+**Note**: When updating `sites.json`, also sync it to the GUI folder for deployment:
+```bash
+npm run sync-sites
+```
+Or manually:
+```bash
+cp sites.json gui/sites.json
+```
+
 ### overrides.json
 
 Contains site-specific configurations:

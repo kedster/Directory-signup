@@ -48,8 +48,11 @@ Deploy the `gui` folder to any static hosting service:
 The GUI uses a multi-strategy approach to load sites.json:
 
 1. **Cloudflare Worker API** (primary) - Fetches from GitHub via Worker
-2. **Relative Path** (fallback) - Loads `../sites.json` for local/Pages deployment
-3. **GitHub Raw URL** (last resort) - Direct fetch from GitHub
+2. **Same Directory** (fallback) - Loads `./sites.json` from the gui folder (for Cloudflare Pages deployment)
+3. **Parent Directory** (fallback) - Loads `../sites.json` from parent folder (for local development)
+4. **GitHub Raw URL** (last resort) - Direct fetch from GitHub
+
+**Note**: The `gui` folder contains its own copy of `sites.json` to ensure it works when deployed as a standalone static site. If you update the main `sites.json` in the repository root, make sure to also copy it to `gui/sites.json` for deployment.
 
 ### Using the Cloudflare Worker API
 
@@ -123,19 +126,21 @@ Click "📤 Import Config" to upload a previously exported configuration.
 
 ### Sites Not Loading
 
-Check the browser console for errors. The GUI tries three methods to load sites:
+Check the browser console for errors. The GUI tries four methods to load sites:
 
 1. Worker API
-2. Relative path
-3. GitHub raw URL
+2. Same directory (`./sites.json`)
+3. Parent directory (`../sites.json`)
+4. GitHub raw URL
 
 If all fail, you'll see an error message.
 
 **Solutions:**
-- Ensure `sites.json` exists in the repository root
+- Ensure `sites.json` exists in both the repository root and the `gui` folder
 - Check that Cloudflare Worker is deployed and accessible
 - Verify CORS settings if using Worker API
 - Try opening `index.html` from a local server instead of file://
+- When deploying to static hosting, ensure the entire `gui` folder (including `sites.json`) is deployed
 
 ### Cannot Save Changes
 
