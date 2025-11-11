@@ -126,6 +126,8 @@ Click "📤 Import Config" to upload a previously exported configuration.
 
 ### Sites Not Loading
 
+**IMPORTANT:** If sites are not showing in production, see [DEPLOYMENT_TROUBLESHOOTING.md](../DEPLOYMENT_TROUBLESHOOTING.md) for a comprehensive troubleshooting guide.
+
 Check the browser console for errors. The GUI tries four methods to load sites:
 
 1. Worker API
@@ -135,9 +137,10 @@ Check the browser console for errors. The GUI tries four methods to load sites:
 
 If all fail, you'll see an error message.
 
-**Solutions:**
+**Quick Solutions:**
 - Ensure `sites.json` exists in both the repository root and the `gui` folder
-- Check that Cloudflare Worker is deployed and accessible
+- Run `npm run sync-sites` from the repository root to sync the files
+- Check that Cloudflare Worker is deployed and accessible (optional)
 - Verify CORS settings if using Worker API
 - Try opening `index.html` from a local server instead of file://
 - When deploying to static hosting, ensure the entire `gui` folder (including `sites.json`) is deployed

@@ -1,0 +1,37 @@
+name: Sync sites.json to GUI
+
+on:
+  push:
+    paths:
+      - 'sites.json'
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync sites.json to GUI folder
+        run: |
+          echo "Syncing sites.json to gui/sites.json..."
+          cp sites.json gui/sites.json
+          
+      - name: Check if there are changes
+        id: check_changes
+        run: |
+          git diff --quiet gui/sites.json || echo "changes=true" >> $GITHUB_OUTPUT
+          
+      - name: Commit and push if changed
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add gui/sites.json
+          git commit -m "Auto-sync sites.json to gui folder [skip ci]"
+          git push

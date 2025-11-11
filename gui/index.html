@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Directory Signup Management</title>
+    <!-- 
+        DEPLOYMENT NOTE:
+        This GUI loads sites.json using multiple fallback strategies:
+        1. Cloudflare Worker API (optional - requires worker deployment)
+        2. Same directory (./sites.json) - for static hosting
+        3. Parent directory (../sites.json) - for local development
+        4. GitHub Raw URL - as last resort
+        
+        For production deployment without the Worker API:
+        - Ensure sites.json is copied to the gui/ folder
+        - Deploy the entire gui/ folder to your static host
+        - The GUI will automatically fallback to loading ./sites.json
+        
+        To configure a custom Worker API URL, set before loading:
+        <script>window.API_BASE_URL = 'https://your-worker.workers.dev';</script>
+    -->
     <style>
         * {
             margin: 0;
@@ -529,6 +545,7 @@
         let searchQuery = '';
         
         // API configuration - can be overridden by setting window.API_BASE_URL
+        // Note: Worker API is optional. GUI will fallback to loading sites.json directly.
         const API_BASE_URL = window.API_BASE_URL || 'https://directory-signup-api.kedster.workers.dev';
         
         // Load sites data with multiple fallback strategies
@@ -536,79 +553,112 @@
             try {
                 let data = null;
                 let loadMethod = 'unknown';
+                const loadErrors = [];
                 
                 // Strategy 1: Try loading from Cloudflare Worker API
                 try {
-                    console.log('Attempting to load sites from Worker API...');
-                    const apiResponse = await fetch(`${API_BASE_URL}/api/sites`);
+                    console.log('Strategy 1: Attempting to load sites from Worker API...');
+                    const apiResponse = await fetch(`${API_BASE_URL}/api/sites`, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    console.log(`Worker API response status: ${apiResponse.status}`);
                     if (apiResponse.ok) {
                         const apiData = await apiResponse.json();
                         if (apiData.success && apiData.data) {
                             data = apiData.data;
                             loadMethod = 'Worker API';
                             console.log('✓ Successfully loaded from Worker API');
+                        } else {
+                            loadErrors.push(`Worker API returned invalid data structure`);
                         }
+                    } else {
+                        loadErrors.push(`Worker API returned status ${apiResponse.status}`);
                     }
                 } catch (apiError) {
                     console.warn('Worker API unavailable:', apiError.message);
+                    loadErrors.push(`Worker API error: ${apiError.message}`);
                 }
                 
                 // Strategy 2: Try loading from same directory (for Cloudflare Pages deployment)
                 if (!data) {
                     try {
-                        console.log('Attempting to load sites from same directory...');
-                        const response = await fetch('./sites.json');
+                        console.log('Strategy 2: Attempting to load sites from same directory (./sites.json)...');
+                        const response = await fetch('./sites.json', {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        console.log(`Same directory response status: ${response.status}`);
                         if (response.ok) {
                             data = await response.json();
                             loadMethod = 'Same Directory';
                             console.log('✓ Successfully loaded from same directory');
+                        } else {
+                            loadErrors.push(`Same directory returned status ${response.status}`);
                         }
                     } catch (sameDirectoryError) {
                         console.warn('Same directory unavailable:', sameDirectoryError.message);
+                        loadErrors.push(`Same directory error: ${sameDirectoryError.message}`);
                     }
                 }
                 
                 // Strategy 3: Try loading from relative path (for local development)
                 if (!data) {
                     try {
-                        console.log('Attempting to load sites from parent directory...');
-                        const response = await fetch('../sites.json');
+                        console.log('Strategy 3: Attempting to load sites from parent directory (../sites.json)...');
+                        const response = await fetch('../sites.json', {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        console.log(`Parent directory response status: ${response.status}`);
                         if (response.ok) {
                             data = await response.json();
                             loadMethod = 'Parent Directory';
                             console.log('✓ Successfully loaded from parent directory');
+                        } else {
+                            loadErrors.push(`Parent directory returned status ${response.status}`);
                         }
                     } catch (relativeError) {
                         console.warn('Parent directory unavailable:', relativeError.message);
+                        loadErrors.push(`Parent directory error: ${relativeError.message}`);
                     }
                 }
                 
                 // Strategy 4: Try loading from GitHub raw URL as last resort
                 if (!data) {
                     try {
-                        console.log('Attempting to load sites from GitHub...');
+                        console.log('Strategy 4: Attempting to load sites from GitHub raw...');
                         const githubUrl = 'https://raw.githubusercontent.com/kedster/Directory-signup/main/sites.json';
-                        const response = await fetch(githubUrl);
+                        const response = await fetch(githubUrl, {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        console.log(`GitHub raw response status: ${response.status}`);
                         if (response.ok) {
                             data = await response.json();
                             loadMethod = 'GitHub Raw';
                             console.log('✓ Successfully loaded from GitHub');
+                        } else {
+                            loadErrors.push(`GitHub raw returned status ${response.status}`);
                         }
                     } catch (githubError) {
                         console.warn('GitHub unavailable:', githubError.message);
+                        loadErrors.push(`GitHub error: ${githubError.message}`);
                     }
                 }
                 
                 // Check if we successfully loaded data
                 if (!data) {
-                    throw new Error('Unable to load sites from any source');
+                    console.error('All loading strategies failed:', loadErrors);
+                    throw new Error('Unable to load sites from any source. Tried: Worker API, Same Directory, Parent Directory, GitHub Raw. Check console for details.');
                 }
                 
                 // Extract sites array
                 sites = data.sites || data;
                 
                 if (!Array.isArray(sites) || sites.length === 0) {
-                    throw new Error('No sites found in configuration');
+                    console.error('Loaded data:', data);
+                    throw new Error('No sites found in configuration. Data structure may be invalid.');
                 }
                 
                 console.log(`✓ Loaded ${sites.length} sites using ${loadMethod}`);
@@ -620,10 +670,11 @@
                 renderSites();
                 
                 // Show success message
-                showNotification(`Loaded ${sites.length} sites from ${loadMethod}`, 'success');
+                const workerNote = loadMethod === 'Worker API' ? '' : ' (Worker API optional)';
+                showNotification(`Loaded ${sites.length} sites from ${loadMethod}${workerNote}`, 'success');
             } catch (error) {
                 console.error('Error loading sites:', error);
-                showError('Failed to load sites configuration. Please check the console for details.');
+                showError(`Failed to load sites: ${error.message}`);
             }
         }
         
