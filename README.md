@@ -33,6 +33,7 @@ See [MANAGEMENT_GUI.md](./MANAGEMENT_GUI.md) for complete documentation.
 - **[Cloudflare Deployment Guide](./CLOUDFLARE_DEPLOYMENT.md)** - Deploy the Worker API to Cloudflare
 - **[Apify Workflow Guide](./APIFY_WORKFLOW.md)** - Set up and test the Apify automation workflow
 - **[Management GUI Documentation](./MANAGEMENT_GUI.md)** - Use the visual dashboard
+- **[Deployment Troubleshooting](./DEPLOYMENT_TROUBLESHOOTING.md)** - Fix GUI not showing sites in production
 - **[Implementation Summary](./IMPLEMENTATION_SUMMARY.md)** - Technical architecture details
 
 ## Apify Actor Structure
