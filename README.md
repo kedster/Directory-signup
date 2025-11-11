@@ -30,7 +30,8 @@ See [MANAGEMENT_GUI.md](./MANAGEMENT_GUI.md) for complete documentation.
 
 ## 📚 Documentation
 
-- **[Cloudflare Deployment Guide](./CLOUDFLARE_DEPLOYMENT.md)** - Deploy the Worker API to Cloudflare
+- **[GitHub Actions Deployment](./GITHUB_DEPLOYMENT.md)** - 🚀 **NEW:** Deploy from GitHub with automated workflows
+- **[Cloudflare Deployment Guide](./CLOUDFLARE_DEPLOYMENT.md)** - Deploy the Worker API to Cloudflare manually
 - **[Apify Workflow Guide](./APIFY_WORKFLOW.md)** - Set up and test the Apify automation workflow
 - **[Management GUI Documentation](./MANAGEMENT_GUI.md)** - Use the visual dashboard
 - **[Deployment Troubleshooting](./DEPLOYMENT_TROUBLESHOOTING.md)** - Fix GUI not showing sites in production
@@ -66,14 +67,21 @@ This project follows Apify's recommended structure for Node.js actors:
 
 ## Quick Start
 
-### 🚀 For Apify Platform
+### 🚀 For GitHub Actions Deployment (Recommended)
+
+1. **[Add GitHub Secrets](./GITHUB_DEPLOYMENT.md#step-1-add-github-secrets-required)** - Configure Cloudflare credentials
+2. **[Trigger Workflows](./GITHUB_DEPLOYMENT.md#step-2-initial-deployment)** - Deploy Worker & Pages
+3. **[Verify Deployment](./GITHUB_DEPLOYMENT.md#step-3-verify-deployment)** - Test API and GUI
+4. **[Auto-Deploy](./GITHUB_DEPLOYMENT.md#auto-deployment-behavior)** - Future changes deploy automatically
+
+### 🎯 For Apify Platform
 
 1. **[Set up on Apify](./APIFY_WORKFLOW.md#apify-platform-setup)** - Create actor from GitHub
 2. **[Configure input](./APIFY_WORKFLOW.md#input-configuration)** - Add your product details
 3. **[Run workflow](./APIFY_WORKFLOW.md#running-the-workflow)** - Start automation
 4. **[View results](./APIFY_WORKFLOW.md#monitoring--results)** - Check success/failures
 
-### ⚙️ For Cloudflare Workers
+### ⚙️ For Manual Cloudflare Deployment
 
 1. **[Install Wrangler CLI](./CLOUDFLARE_DEPLOYMENT.md#prerequisites)** - Set up tools
 2. **[Configure secrets](./CLOUDFLARE_DEPLOYMENT.md#configuration)** - Add GitHub token
