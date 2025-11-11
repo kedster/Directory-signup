@@ -545,6 +545,7 @@
         let searchQuery = '';
         
         // API configuration - can be overridden by setting window.API_BASE_URL
+        // Note: Worker API is optional. GUI will fallback to loading sites.json directly.
         const API_BASE_URL = window.API_BASE_URL || 'https://directory-signup-api.kedster.workers.dev';
         
         // Load sites data with multiple fallback strategies
@@ -669,7 +670,8 @@
                 renderSites();
                 
                 // Show success message
-                showNotification(`Loaded ${sites.length} sites from ${loadMethod}`, 'success');
+                const workerNote = loadMethod === 'Worker API' ? '' : ' (Worker API optional)';
+                showNotification(`Loaded ${sites.length} sites from ${loadMethod}${workerNote}`, 'success');
             } catch (error) {
                 console.error('Error loading sites:', error);
                 showError(`Failed to load sites: ${error.message}`);
