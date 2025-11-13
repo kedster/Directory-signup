@@ -31,6 +31,7 @@ See [MANAGEMENT_GUI.md](./MANAGEMENT_GUI.md) for complete documentation.
 ## 📚 Documentation
 
 - **[GitHub Actions Deployment](./GITHUB_DEPLOYMENT.md)** - 🚀 **NEW:** Deploy from GitHub with automated workflows
+- **[Plugin Development Guide](./PLUGIN_DEVELOPMENT_GUIDE.md)** - 🔌 **NEW:** Create custom plugins for site-specific automation
 - **[Cloudflare Deployment Guide](./CLOUDFLARE_DEPLOYMENT.md)** - Deploy the Worker API to Cloudflare manually
 - **[Apify Workflow Guide](./APIFY_WORKFLOW.md)** - Set up and test the Apify automation workflow
 - **[Management GUI Documentation](./MANAGEMENT_GUI.md)** - Use the visual dashboard
