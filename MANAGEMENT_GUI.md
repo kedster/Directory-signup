@@ -85,7 +85,9 @@ A modular architecture that allows custom processing logic for different sites.
 
 #### Creating New Plugins:
 
-Create a new file in `/plugins/your-plugin.js`:
+For detailed instructions on creating custom plugins, see the **[Plugin Development Guide](./PLUGIN_DEVELOPMENT_GUIDE.md)**.
+
+Quick example - create a new file in `/plugins/your-plugin.js`:
 
 ```javascript
 export default class YourPlugin {
@@ -114,6 +116,8 @@ export default class YourPlugin {
   }
 }
 ```
+
+For complete documentation including CAPTCHA integration, testing, and best practices, refer to the [Plugin Development Guide](./PLUGIN_DEVELOPMENT_GUIDE.md).
 
 ### 3. Plugin Registry (`plugin-registry.js`)
 
