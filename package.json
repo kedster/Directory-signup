@@ -20,6 +20,6 @@
   "license": "MIT",
   "dependencies": {
     "apify": "^3.3.0",
-    "puppeteer": "^21.6.0"
+    "puppeteer": "^24.29.1"
   }
 }
