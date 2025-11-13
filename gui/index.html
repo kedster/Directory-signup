@@ -48,16 +48,49 @@
             color: white;
             padding: 30px 40px;
             border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .header h1 {
+        .header-content h1 {
             font-size: 32px;
             margin-bottom: 10px;
         }
         
-        .header p {
+        .header-content p {
             opacity: 0.9;
             font-size: 16px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-hero {
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: #f8f9fa;
+        }
+        
+        .btn-hero:active {
+            transform: translateY(-1px);
         }
         
         .stats {
@@ -440,8 +473,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Directory Signup Management</h1>
-            <p>Manage and orchestrate your directory submission workflow</p>
+            <div class="header-content">
+                <h1>🚀 Directory Signup Management</h1>
+                <p>Manage and orchestrate your directory submission workflow</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-hero" id="signUpSiteBtn">📝 Sign Up Your Site</button>
+            </div>
         </div>
         
         <div class="stats">
@@ -553,6 +591,91 @@
                 <div class="modal-actions">
                     <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
                     <button type="button" class="btn btn-secondary" id="cancelBtn" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Sign Up Your Site Modal -->
+    <div id="signUpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Sign Up Your Site</h2>
+                <p style="color: #718096; font-size: 14px; margin-top: 8px;">
+                    Enter your site information to submit to directories or export for Apify
+                </p>
+            </div>
+            <form id="signUpForm">
+                <div class="form-group">
+                    <label for="signUpName">Site/Product Name *</label>
+                    <input type="text" id="signUpName" required placeholder="e.g., My Awesome Product">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signUpEmail">Contact Email *</label>
+                    <input type="email" id="signUpEmail" required placeholder="e.g., hello@mysite.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signUpWebsite">Website URL *</label>
+                    <input type="url" id="signUpWebsite" required placeholder="https://mysite.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signUpDescription">Description *</label>
+                    <textarea id="signUpDescription" required placeholder="Describe your product/service (50-200 words recommended)" rows="5"></textarea>
+                    <small style="display: block; margin-top: 8px; color: #6c757d; font-size: 13px;">
+                        Provide a clear, compelling description that will be used across directory submissions.
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signUpCategory">Category (Optional)</label>
+                    <input type="text" id="signUpCategory" placeholder="e.g., Productivity, SaaS, Developer Tools">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signUpTags">Tags (Optional)</label>
+                    <input type="text" id="signUpTags" placeholder="e.g., automation, productivity, ai">
+                    <small style="display: block; margin-top: 8px; color: #6c757d; font-size: 13px;">
+                        Comma-separated tags
+                    </small>
+                </div>
+                
+                <!-- Apify Configuration Section -->
+                <div style="background: #f7fafc; padding: 20px; border-radius: 8px; margin-top: 20px; border: 2px solid #e2e8f0;">
+                    <h3 style="font-size: 16px; margin-bottom: 12px; color: #2d3748;">
+                        🔌 Apify Configuration (Optional)
+                    </h3>
+                    <p style="font-size: 13px; color: #718096; margin-bottom: 12px;">
+                        To submit directly to Apify, provide your API token and Actor ID. 
+                        <a href="https://console.apify.com/account/integrations" target="_blank" style="color: #667eea;">Get API Token →</a>
+                    </p>
+                    
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label for="signUpApifyToken">Apify API Token</label>
+                        <input type="password" id="signUpApifyToken" placeholder="apify_api_...">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="signUpActorId">Actor ID</label>
+                        <input type="text" id="signUpActorId" placeholder="e.g., kedster/auto-directory-signup">
+                        <small style="display: block; margin-top: 8px; color: #6c757d; font-size: 13px;">
+                            Format: username/actor-name or full Actor ID
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="modal-actions" style="margin-top: 24px;">
+                    <button type="button" class="btn btn-primary" id="submitToApifyBtn" style="flex: 1;">
+                        🚀 Submit to Apify
+                    </button>
+                    <button type="button" class="btn btn-primary" id="exportInputBtn" style="flex: 1;">
+                        📥 Export Input JSON
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="cancelSignUpBtn" style="flex: 0.5;">
+                        Cancel
+                    </button>
                 </div>
             </form>
         </div>
@@ -987,6 +1110,160 @@
                 reader.readAsText(file);
             };
             input.click();
+        });
+        
+        // ===========================================================
+        // SIGN UP YOUR SITE FUNCTIONALITY
+        // ===========================================================
+        
+        // Open Sign Up Your Site modal
+        document.getElementById('signUpSiteBtn').addEventListener('click', () => {
+            document.getElementById('signUpModal').classList.add('show');
+        });
+        
+        // Cancel Sign Up
+        document.getElementById('cancelSignUpBtn').addEventListener('click', () => {
+            document.getElementById('signUpModal').classList.remove('show');
+            document.getElementById('signUpForm').reset();
+        });
+        
+        // Close modal on background click
+        document.getElementById('signUpModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('signUpModal')) {
+                document.getElementById('signUpModal').classList.remove('show');
+                document.getElementById('signUpForm').reset();
+            }
+        });
+        
+        // Get form data
+        function getSignUpFormData() {
+            const formData = {
+                name: document.getElementById('signUpName').value.trim(),
+                email: document.getElementById('signUpEmail').value.trim(),
+                website: document.getElementById('signUpWebsite').value.trim(),
+                description: document.getElementById('signUpDescription').value.trim(),
+                category: document.getElementById('signUpCategory').value.trim(),
+                tags: document.getElementById('signUpTags').value.trim()
+            };
+            
+            // Validate required fields
+            if (!formData.name || !formData.email || !formData.website || !formData.description) {
+                throw new Error('Please fill in all required fields (marked with *)');
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                throw new Error('Please enter a valid email address');
+            }
+            
+            // Validate URL
+            try {
+                new URL(formData.website);
+            } catch (e) {
+                throw new Error('Please enter a valid website URL (including https://)');
+            }
+            
+            return formData;
+        }
+        
+        // Generate Apify input JSON
+        function generateApifyInput(formData) {
+            const apifyInput = {
+                listings: [
+                    {
+                        name: formData.name,
+                        email: formData.email,
+                        website: formData.website,
+                        description: formData.description
+                    }
+                ]
+            };
+            
+            // Add optional fields if provided
+            if (formData.category) {
+                apifyInput.listings[0].category = formData.category;
+            }
+            if (formData.tags) {
+                apifyInput.listings[0].tags = formData.tags.split(',').map(t => t.trim()).filter(t => t);
+            }
+            
+            return apifyInput;
+        }
+        
+        // Export Input JSON
+        document.getElementById('exportInputBtn').addEventListener('click', () => {
+            try {
+                const formData = getSignUpFormData();
+                const apifyInput = generateApifyInput(formData);
+                
+                // Create and download JSON file
+                const dataStr = JSON.stringify(apifyInput, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `apify-input-${formData.name.toLowerCase().replace(/\s+/g, '-')}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('✓ Input JSON exported successfully!', 'success');
+                
+                // Show instructions
+                setTimeout(() => {
+                    alert(`Input JSON downloaded successfully!\n\nNext steps:\n1. Go to Apify Console (https://console.apify.com)\n2. Navigate to your Directory Signup Actor\n3. Click "Run" or "Try for free"\n4. Paste the contents of the downloaded JSON into the Input tab\n5. Click "Start" to run the automation\n\nThe Actor will process your site across all active directories.`);
+                }, 500);
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        });
+        
+        // Submit to Apify directly
+        document.getElementById('submitToApifyBtn').addEventListener('click', async () => {
+            try {
+                const formData = getSignUpFormData();
+                const apifyToken = document.getElementById('signUpApifyToken').value.trim();
+                const actorId = document.getElementById('signUpActorId').value.trim();
+                
+                // Validate Apify credentials
+                if (!apifyToken || !actorId) {
+                    showError('Please provide both Apify API Token and Actor ID to submit directly.\n\nAlternatively, use "Export Input JSON" to manually submit later.');
+                    return;
+                }
+                
+                const apifyInput = generateApifyInput(formData);
+                
+                showNotification('Submitting to Apify...', 'info');
+                
+                // Import ApifyClient dynamically (for browser environment)
+                // Note: This requires the apify-client to be loaded via CDN or bundled
+                const { ApifyClient } = await import('https://cdn.jsdelivr.net/npm/apify-client@2/dist/bundle.browser.min.js');
+                
+                // Initialize the ApifyClient with API token
+                const client = new ApifyClient({
+                    token: apifyToken
+                });
+                
+                // Run the Actor
+                const run = await client.actor(actorId).call(apifyInput);
+                
+                showNotification('✓ Successfully submitted to Apify!', 'success');
+                
+                // Show success message with run details
+                setTimeout(() => {
+                    const runUrl = `https://console.apify.com/actors/${run.actorId.split('/').pop()}/runs/${run.id}`;
+                    alert(`Successfully started Apify Actor run!\n\nRun ID: ${run.id}\nStatus: ${run.status}\n\nView run details:\n${runUrl}\n\nThe Actor is now processing your site across all active directories. Check the Apify Console for real-time progress and results.`);
+                }, 500);
+                
+                // Close modal and reset form
+                document.getElementById('signUpModal').classList.remove('show');
+                document.getElementById('signUpForm').reset();
+                
+            } catch (error) {
+                console.error('Apify submission error:', error);
+                showError(`Failed to submit to Apify: ${error.message}\n\nPlease verify your API token and Actor ID are correct, or use "Export Input JSON" to submit manually.`);
+            }
         });
         
         // Initialize
