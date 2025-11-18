@@ -6,6 +6,7 @@ Automate SaaS listing directory signups using Puppeteer and Apify. This Apify Ac
 
 - 🚀 Process 50 directory sites automatically
 - 🎨 **Management GUI** for visual control and orchestration
+- 📝 **"Sign Up Your Site" Feature** - Submit your product directly from the GUI
 - 🔌 **Plugin system** for site-specific customization
 - 🔄 Concurrent processing (5 sites at a time)
 - 🤖 **Anti-CAPTCHA support** for automated CAPTCHA solving
@@ -21,6 +22,7 @@ Automate SaaS listing directory signups using Puppeteer and Apify. This Apify Ac
 This project now includes a comprehensive management system:
 
 - **Visual Dashboard**: Manage all directory sites from a web interface
+- **"Sign Up Your Site" Feature**: Directly submit your product or export Apify input
 - **Plugin Architecture**: Modular system for custom site handling
 - **Dynamic Configuration**: Enable/disable sites, assign plugins, add notes
 - **Cloudflare Pages Compatible**: Deploy GUI as static site
@@ -92,6 +94,59 @@ This project follows Apify's recommended structure for Node.js actors:
 ### 🎨 For Local Development
 
 See [Installation](#installation) and [Usage](#usage) sections below.
+
+---
+
+## 📝 Sign Up Your Site Feature
+
+The GUI now includes a "Sign Up Your Site" button that allows you to easily prepare your product submission:
+
+### How to Use
+
+1. **Open the Management GUI** (deployed at Cloudflare Pages or run locally)
+2. **Click "📝 Sign Up Your Site"** in the header
+3. **Fill in your product information:**
+   - Site/Product Name (required)
+   - Contact Email (required)
+   - Website URL (required)
+   - Description (required)
+   - Category (optional)
+   - Tags (optional)
+
+4. **Choose your submission method:**
+
+   **Option A: Export Input JSON**
+   - Click "📥 Export Input JSON"
+   - Download the generated JSON file
+   - Go to [Apify Console](https://console.apify.com)
+   - Navigate to your Directory Signup Actor
+   - Paste the JSON into the Input tab
+   - Click "Start" to run
+
+   **Option B: Submit Directly to Apify**
+   - Enter your Apify API Token (get from [Apify Integrations](https://console.apify.com/account/integrations))
+   - Enter your Actor ID (e.g., `kedster/auto-directory-signup`)
+   - Click "🚀 Submit to Apify"
+   - The actor will start running automatically
+
+### Generated Input Format
+
+The feature generates Apify-compatible input in this format:
+
+```json
+{
+  "listings": [
+    {
+      "name": "Your Product Name",
+      "email": "your@email.com",
+      "website": "https://yoursite.com",
+      "description": "Your product description",
+      "category": "Optional category",
+      "tags": ["optional", "tags"]
+    }
+  ]
+}
+```
 
 ---
 
