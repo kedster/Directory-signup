@@ -1,4 +1,4 @@
-name = "directory-signup-api"
+name = "dirworker"
 main = "index.js"
 compatibility_date = "2024-01-01"
 
